@@ -1,7 +1,8 @@
 CXX=g++
-CXXFLAGS=-g -std=c++11 -Wall 
+INC_DIR = ../shared_memory
+CXXFLAGS=-g -std=c++11 -Wall -I$(INC_DIR) 
 OBJDIR=obj
-CPPFILES=$(wildcard *.cpp)
+CPPFILES=$(wildcard *.cpp) $(wildcard $(INC_DIR)/*.cpp)
 OBJS=$(addprefix $(OBJDIR)/,$(notdir $(CPPFILES:.cpp=.o)))
 
 all:	 $(OBJDIR)/escalonador
@@ -15,6 +16,9 @@ $(OBJDIR)/escalonador:	$(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o escalonador
 
 $(OBJDIR)/%.o:	%.cpp obj
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o:	$(INC_DIR)/%.cpp obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJDIR): 
