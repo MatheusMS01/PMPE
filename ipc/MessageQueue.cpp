@@ -18,7 +18,7 @@ MessageQueue::~MessageQueue()
    Writes string in MessageQueue, for a specific type
 
    @param message to be written,
-          type to be read
+          type to be written
    @return true if succeeds, false otherwise
 */
 bool MessageQueue::write(const std::string& message, const unsigned int type)
