@@ -1,8 +1,6 @@
 #include "MessageQueue.h"
 
-#include <iostream>
-
-MessageQueue::MessageQueue(int key)
+MessageQueue::MessageQueue(key_t key)
    : m_key(key)
    , m_id(0)
 {
@@ -26,19 +24,23 @@ bool MessageQueue::write(const std::string& message, const unsigned int type)
    if(m_id > -1)
    {
       Buffer *buffer = new Buffer();
+
       buffer->type = type;
       sprintf(buffer->data, "%.255s", message.c_str());
-      return (msgsnd(m_id, buffer, sizeof(buffer->data), 0) != -1);
+      auto result = (msgsnd(m_id, buffer, sizeof(buffer->data), 0) != -1);
+
+      delete buffer;
+      return result;
    }
    
    return false;
 }
 
 /**
-   Reads the first message type in MessageQueue
-
+   Blocks caller until there is a specified message type to read;
    If no type is specified, then read first message
    in Queue by default
+
    @param reference of message to be read,
           type to be read
    @return true if succeeds, false otherwise
@@ -48,11 +50,15 @@ bool MessageQueue::read(std::string& message, const unsigned int type)
    if(m_id > -1)
    {
       Buffer *buffer = new Buffer();
-      if(msgrcv(m_id, buffer, sizeof(buffer->data), type,  0) != -1)
+
+      auto result = msgrcv(m_id, buffer, sizeof(buffer->data), type,  0) != -1;
+      if(result == true)
       {
          message = buffer->data;
-         return true;
       }
+
+      delete buffer;
+      return result;
    }
 
    return false;

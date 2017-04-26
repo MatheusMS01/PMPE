@@ -9,12 +9,17 @@
 class MessageQueue
 {
 public:
-   MessageQueue(int key);
+   MessageQueue(key_t key);
    ~MessageQueue();
 
-   enum QueueKey : int
+   enum QueueKey : key_t
    {
-      SchedulerQueueKey = 120053161
+      MainQueueKey = 120053161
+   };
+
+   enum ProcessType : unsigned int
+   {
+      SchedulerId = 1
    };
 
    bool write(const std::string& message, const unsigned int type);

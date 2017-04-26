@@ -1,22 +1,25 @@
 #include "MessageQueue.h"
+#include "Protocol.h"
 
 #include <iostream>
 #include <string>
 
 int main()
 {
-   MessageQueue messageQueue(MessageQueue::SchedulerQueueKey);
+   MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
    while(true)
    {
       std::string message;
-      if(messageQueue.read(message))
+      if(messageQueue.read(message, MessageQueue::SchedulerId))
       {
-         std::cout << "Message read: " << message << "\n";
-      }
-      else
-      {
-         std::cout << "Failed to read" << "\n";
+         Protocol::ParameterList parameterList;
+         Protocol::parsePdu(message, parameterList);
+
+         for(auto test : parameterList)
+         {
+            std::cout << test << "\n"; 
+         }
       }
    }
 
