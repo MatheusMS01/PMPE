@@ -1,2 +1,2 @@
 1) Remover valor default de type na interface Read de MessageQueue
-2) New e delete de buffer(MessageQueue) no construtor e destrutor, respectivamente
+2) New e delete de buffer(MessageQueue)
