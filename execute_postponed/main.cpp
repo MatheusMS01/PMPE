@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
    MessageQueue messageQueue(MessageQueue::SchedulerQueueKey);
 
 
-   if(!messageQueue.write(argv[1]))
+   if(!messageQueue.write(argv[1], 1))
    {
       std::cout << "Failed to write." << std::endl;
    }
