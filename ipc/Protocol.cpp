@@ -19,7 +19,7 @@ void Protocol::buildPdu(const int protocolId,
          pdu.append(";" + std::to_string(protocolId) + ";");
          for(short index = 0; index < EEPExpectedParameters; ++index)
          {
-            pdu.append(";" + parameterList.at(index) + ";");
+            pdu.append(parameterList.at(index) + ";");
          }
       }
       break;

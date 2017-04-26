@@ -23,7 +23,7 @@ public:
    };
 
    bool write(const std::string& message, const unsigned int type);
-   bool read(std::string& message, const unsigned int type = 0);
+   bool read(std::string& message, const unsigned int type);
 
    int getId();
 private:
