@@ -1,5 +1,5 @@
 CXX=g++
-INC_DIR = ../shared_memory
+INC_DIR = ../ipc
 CXXFLAGS=-g -std=c++11 -Wall -I$(INC_DIR) 
 OBJDIR=obj
 CPPFILES=$(wildcard *.cpp) $(wildcard $(INC_DIR)/*.cpp)
