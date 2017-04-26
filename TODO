@@ -1,2 +1,2 @@
 1) Remover valor default de type na interface Read de MessageQueue
-2) Delete de buffer(MessageQueue)
+2) Usar smart pointer para buffer(MessageQueue)
