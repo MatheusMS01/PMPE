@@ -1,3 +1,5 @@
+#pragma once
+
 #include "IProtocol.h"
 
 class ExecuteProgramPostponedProtocol : public IProtocol
@@ -6,7 +8,7 @@ public:
    enum ContentId : int
    {
       Seconds          = 0,
-      ProgramName      = 1,
+      ProgramName      = 1,      
       DestinationNode  = 2,
       ParametersNumber = DestinationNode + 1, 
    };

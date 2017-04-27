@@ -65,10 +65,9 @@ int Scheduler::execute()
       {
          case IProtocol::ExecuteProgramPostponed:
          {
-            ExecuteProgramPostponedProtocol eep;
-            std::cout << message << std::endl;
-            eep.parse(message);
-            treat(eep);
+            ExecuteProgramPostponedProtocol epp;
+            epp.parse(message);
+            treat(epp);
          }
          break;
 

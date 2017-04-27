@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MessageQueue.h"
+#include "ExecuteProgramPostponedProtocol.h"
 #include <vector>
 
 class Node
@@ -39,4 +40,6 @@ private:
    std::vector<Neighbor> m_neighborList;
 
    void buildNeighborhood();
+   void treat(ExecuteProgramPostponedProtocol epp);
+   void route(const std::string& pdu, int destinationNode);
 };
