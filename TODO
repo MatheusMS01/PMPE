@@ -1,2 +1,1 @@
-1) Remover valor default de type na interface Read de MessageQueue
-2) Usar smart pointer para buffer(MessageQueue)
+Reformar IProtocol e cada protocolo que o herda, deve implementar seu próprio parse e serialize
