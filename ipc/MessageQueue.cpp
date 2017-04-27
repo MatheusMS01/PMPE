@@ -27,7 +27,7 @@ bool MessageQueue::write(const std::string& message, const unsigned int type)
 
       buffer->type = type;
       sprintf(buffer->data, "%.255s", message.c_str());
-      auto result = (msgsnd(m_id, buffer, sizeof(buffer->data), 0) != -1);
+      const auto result = msgsnd(m_id, buffer, sizeof(buffer->data), 0) != -1;
 
       delete buffer;
       return result;
@@ -51,7 +51,7 @@ bool MessageQueue::read(std::string& message, const unsigned int type)
    {
       Buffer *buffer = new Buffer();
 
-      auto result = msgrcv(m_id, buffer, sizeof(buffer->data), type,  0) != -1;
+      const auto result = msgrcv(m_id, buffer, sizeof(buffer->data), type,  0) != -1;
       if(result == true)
       {
          message = buffer->data;
