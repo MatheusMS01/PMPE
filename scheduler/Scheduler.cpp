@@ -68,11 +68,6 @@ int Scheduler::execute()
             ExecuteProgramPostponedProtocol eep;
             std::cout << message << std::endl;
             eep.parse(message);
-
-            std::cout << "Seconds: " << eep.getSeconds() << "\n";
-            std::cout << "ProgramName: " << eep.getProgramName() << "\n";
-            std::cout << "DestinationNode: " << eep.getDestinationNode() << "\n";
-            std::cout << "Serialized: " << eep.serialize() << "\n";
             treat(eep);
          }
          break;
