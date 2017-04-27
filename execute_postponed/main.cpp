@@ -1,5 +1,5 @@
 #include "MessageQueue.h"
-#include "Protocol.h"
+#include "ExecuteProgramPostponedProtocol.h"
 
 #include <iostream>
 #include <string>
@@ -7,31 +7,19 @@
 
 int main(int argc, char* argv[])
 {
-   if(argc < 3)
+   if(argc != 3)
    {
-      std::cout << "Missing params!";
+      std::cout << "Wrong number of params!";
       return 1;
    }
 
    MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
-   std::string pdu;
-   {
-      Protocol::ParameterList parameterList;
-      parameterList.resize(Protocol::EEPExpectedParameters);
-      parameterList[Protocol::SecondsId] = argv[1];
-      parameterList[Protocol::FileNameId] = argv[2];
-      parameterList[Protocol::DestinationNodeId] = "0";
+   ExecuteProgramPostponedProtocol epp;
+   epp.setSeconds(std::stoi(argv[1]));
+   epp.setProgramName(argv[2]);
 
-      Protocol::buildPdu(Protocol::ExecuteProgramPostponed, pdu, parameterList);
-   }
-
-   if(pdu.empty())
-   {
-      std::cout << "Failed to build pdu" << std::endl;
-   }
-
-   if(!messageQueue.write(pdu, MessageQueue::SchedulerId))
+   if(!messageQueue.write(epp.serialize(), MessageQueue::SchedulerId))
    {
       std::cout << "Failed to write." << std::endl;
    }

@@ -1,7 +1,11 @@
 #pragma once
 
-#include <sys/types.h>
-#include <sys/shm.h>
+#include "MessageQueue.h"
+
+#include "ExecuteProgramPostponedProtocol.h"
+
+#include <map>
+#include <list>
 
 class Scheduler
 {
@@ -10,4 +14,13 @@ public:
    ~Scheduler();
 
    int execute();
+
+private:
+   MessageQueue m_messageQueue;
+   std::map<int, int> m_nodeMap;
+   
+
+   bool createNodes();
+
+   void treat(ExecuteProgramPostponedProtocol& eep);
 };

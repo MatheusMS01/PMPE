@@ -1,27 +1,8 @@
-#include "MessageQueue.h"
-#include "Protocol.h"
-
-#include <iostream>
-#include <string>
+#include "Scheduler.h"
 
 int main()
 {
-   MessageQueue messageQueue(MessageQueue::MainQueueKey);
+   Scheduler scheduler;
 
-   while(true)
-   {
-      std::string message;
-      if(messageQueue.read(message, MessageQueue::SchedulerId))
-      {
-         Protocol::ParameterList parameterList;
-         Protocol::parsePdu(message, parameterList);
-
-         for(auto test : parameterList)
-         {
-            std::cout << test << "\n"; 
-         }
-      }
-   }
-
-   return 0;
+   return scheduler.execute();
 }
