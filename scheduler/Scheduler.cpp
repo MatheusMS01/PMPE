@@ -34,12 +34,13 @@ bool Scheduler::createNodes()
          Node node(nodeId);
          node.execute();
 
-         exit(0);
+         _exit(0);
       }
       else
       {
          m_nodeMap.insert(std::make_pair(nodeId, Node::Free));
-         wait();
+         // @TODO: Not working on OSX
+         // wait();
       }
    }
 
