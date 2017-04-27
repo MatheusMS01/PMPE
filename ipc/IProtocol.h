@@ -13,8 +13,6 @@ public:
       Shutdown                = 2,
    };
 
-   IProtocol(int id, int parametersNumber);
-
    using ContentList = std::vector<std::string>;
 
    virtual std::string serialize();
@@ -25,4 +23,5 @@ protected:
    int m_parametersNumber;
    ContentList m_contentList;
    
+   IProtocol(int id, int parametersNumber);
 };
