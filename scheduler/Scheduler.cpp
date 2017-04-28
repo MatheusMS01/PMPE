@@ -40,7 +40,7 @@ bool Scheduler::createNodes()
       {
          m_nodeMap.insert(std::make_pair(nodeId, Node::Free));
          // @TODO: Not working on OSX
-         // wait();
+         wait();
       }
    }
 
@@ -72,6 +72,14 @@ int Scheduler::execute()
          }
          break;
 
+         case IProtocol::NotifyScheduler:
+         {
+            NotifySchedulerProtocol ns;
+            ns.parse(message);
+            treat(ns);
+         }
+         break;
+
          default:
          {
          }
@@ -83,21 +91,39 @@ int Scheduler::execute()
 }
 
 // Send message to all nodes via node zero
-void Scheduler::treat(ExecuteProgramPostponedProtocol& eep)
+void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 {
+   sleep(epp.getDelay());
    for(auto& node : m_nodeMap)
    {
       if(node.second == Node::Busy)
       {
          // @TODO: Add to list
+         std::cout << "Node " << node.first << " is busy";
          continue;
       }
 
-      eep.setDestinationNode(node.first);
+      epp.setDestinationNode(node.first);
 
       // Write to node zero
-      m_messageQueue.write(eep.serialize(), MessageQueue::SchedulerId + 1);
+      m_messageQueue.write(epp.serialize(), MessageQueue::SchedulerId + 1);
 
       node.second = Node::Busy;
    }
+}
+
+
+void Scheduler::treat(NotifySchedulerProtocol& ns)
+{
+   m_nodeMap[ns.getNodeId()] = Node::Free;
+
+   const auto makespan = ns.getEndTime() - ns.getBeginTime();
+
+   std::string message;
+   message.append("job=" + std::to_string(ns.getNodeId()) + ", ");
+   message.append("arquivo=" + ns.getProgramName() + ", ");
+   message.append("delay=" + std::to_string(ns.getDelay()) + ", ");
+   message.append("makespan=" + std::to_string(makespan));
+
+   std::cout << message << "\n";
 }

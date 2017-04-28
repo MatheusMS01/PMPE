@@ -5,9 +5,9 @@
 class ExecuteProgramPostponedProtocol : public IProtocol
 {
 public:
-   enum ContentId : int
+   enum ParameterId : unsigned int
    {
-      Seconds          = 0,
+      Delay            = 0,
       ProgramName      = 1,      
       DestinationNode  = 2,
       ParametersNumber = DestinationNode + 1, 
@@ -15,8 +15,10 @@ public:
 
    ExecuteProgramPostponedProtocol();
 
-   void setSeconds(int seconds);
-   int getSeconds();
+   bool parse(const std::string& pdu);
+
+   void setDelay(int delay);
+   int getDelay();
 
    void setProgramName(const std::string& programName);
    std::string& getProgramName();

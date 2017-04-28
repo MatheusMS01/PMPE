@@ -2,6 +2,7 @@
 
 #include "MessageQueue.h"
 #include "ExecuteProgramPostponedProtocol.h"
+#include "NotifySchedulerProtocol.h"
 #include <vector>
 
 class Node
@@ -21,16 +22,16 @@ private:
    struct Neighbor
    {
       Neighbor(unsigned int x, unsigned int y)
-         : m_x(x)
-         , m_y(y)
+         : x(x)
+         , y(y)
       {
-         m_id = m_x + (m_y * 4);
-         m_processType = m_id + MessageQueue::SchedulerId + 1;
+         id = x + (y * 4);
+         processType = id + MessageQueue::SchedulerId + 1;
       }
-      int m_id;
-      unsigned int m_processType;
-      unsigned int m_x;
-      unsigned int m_y;
+      int id;
+      unsigned int processType;
+      unsigned int x;
+      unsigned int y;
    };
    int m_id;
    unsigned int m_processType;
@@ -38,8 +39,10 @@ private:
    unsigned int m_x;
    unsigned int m_y;
    std::vector<Neighbor> m_neighborList;
+   NotifySchedulerProtocol m_ns;
 
    void buildNeighborhood();
    void treat(ExecuteProgramPostponedProtocol epp);
+   void treat(NotifySchedulerProtocol ns);
    void route(const std::string& pdu, int destinationNode);
 };

@@ -9,19 +9,19 @@ public:
    enum ProtocolId : int
    {
       ExecuteProgramPostponed = 0,
-      UpdateState             = 1,
+      NotifyScheduler         = 1,
       Shutdown                = 2,
    };
 
-   using ContentList = std::vector<std::string>;
+   using ParameterList = std::vector<std::string>;
 
    virtual std::string serialize();
    virtual bool parse(const std::string& pdu);
 
 protected:
    int m_id;
-   int m_parametersNumber;
-   ContentList m_contentList;
+   unsigned int m_parametersNumber;
+   ParameterList m_parameterList;
    
-   IProtocol(int id, int parametersNumber);
+   IProtocol(int id, unsigned int parametersNumber);
 };

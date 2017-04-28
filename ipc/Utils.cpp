@@ -8,9 +8,9 @@ int Utils::getProtocolId(const std::string& pdu)
       return -1;
    }
 
-   auto contentList = getPduContent(pdu);
+   auto parameterList = getPduContent(pdu);
 
-   return std::stoi(contentList.at(0));
+   return std::stoi(parameterList.at(0));
 }
 
 unsigned int Utils::distanceBetweenNodes(int nodeId1, int nodeId2)
@@ -20,7 +20,8 @@ unsigned int Utils::distanceBetweenNodes(int nodeId1, int nodeId2)
    int x2 = nodeId2 % 4;
    int y2 = nodeId2 / 4;
 
-   const auto distance = static_cast<unsigned int>(std::abs(static_cast<double>(x2 - x1)) + std::abs(static_cast<double>(y2 - y1)));
+   const auto distance = static_cast<unsigned int>(std::abs(static_cast<double>(x2 - x1)) +
+                                                   std::abs(static_cast<double>(y2 - y1)));
 
    return distance;
 }

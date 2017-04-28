@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
    MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
    ExecuteProgramPostponedProtocol epp;
-   epp.setSeconds(std::stoi(argv[1]));
+   epp.setDelay(std::stoi(argv[1]));
    epp.setProgramName(argv[2]);
 
    if(!messageQueue.write(epp.serialize(), MessageQueue::SchedulerId))

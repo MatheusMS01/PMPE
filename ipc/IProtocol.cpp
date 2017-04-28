@@ -1,12 +1,14 @@
 #include "IProtocol.h"
 
+#include "Utils.h"
+
 #include <algorithm>
 
-IProtocol::IProtocol(int id, int parametersNumber)
+IProtocol::IProtocol(int id, unsigned int parametersNumber)
    : m_id(id)
    , m_parametersNumber(parametersNumber)
 {
-   m_contentList.resize(parametersNumber);
+   m_parameterList.resize(parametersNumber);
 }
 
 std::string IProtocol::serialize()
@@ -14,9 +16,9 @@ std::string IProtocol::serialize()
    std::string pdu;
 
    pdu.append(";" + std::to_string(m_id) + ";");
-   for(const auto& content : m_contentList)
+   for(const auto& parameter : m_parameterList)
    {
-      pdu.append(content + ";");
+      pdu.append(parameter + ";");
    }
 
    return pdu;
@@ -24,52 +26,21 @@ std::string IProtocol::serialize()
 
 bool IProtocol::parse(const std::string& pdu)
 {
-   // Deduce number of parameters by counting number of ';' occurrences
-   if(std::count(pdu.begin(), pdu.end(), ';') - 2 != m_parametersNumber)
+   auto parameterList = Utils::getPduContent(pdu);
+
+   if(parameterList.size() < m_parametersNumber + 1)
    {
-      // Invalid Pdu
       return false;
    }
 
-   m_contentList.clear();
-   m_contentList.resize(m_parametersNumber);
-
-   std::string buffer;
-   bool isProtocolId = true;
-   int contentId = 0;
-   for(const auto byte : pdu)
+   if(parameterList.at(0) != std::to_string(m_id))
    {
-      if(byte == ';')
-      {
-         if(buffer.empty())
-         {
-            continue;
-         }
-
-         // Don't insert protocol id in
-         // content list
-         if(!isProtocolId)
-         {
-            m_contentList.at(contentId) = buffer;
-            ++contentId;
-         }
-         else
-         {
-            if(std::stoi(buffer) != m_id)
-            {
-               // Wrong protocol id
-               return false;
-            }
-         }
-         
-         isProtocolId = false;
-
-         buffer.clear();
-         continue;
-      }
-
-      buffer += byte;
+      return false;
    }
+
+   parameterList.erase(parameterList.begin());
+
+   m_parameterList = parameterList;
 
    return true;
 }
