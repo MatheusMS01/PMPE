@@ -1,3 +1,4 @@
 Reformar IProtocol e cada protocolo que o herda, deve implementar seu próprio parse e serialize
 Explicit constructor
 override
+default
