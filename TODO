@@ -1,4 +1,8 @@
-Reformar IProtocol e cada protocolo que o herda, deve implementar seu próprio parse e serialize
 Explicit constructor
 override
 default
+
+{
+  http://stackoverflow.com/questions/2377811/tracking-the-death-of-a-child-process - Segunda resposta.
+  Quando child process do nó morre pela primeira vez, o sinal é capturado. Já nas proximas vezes, não. Loop infinito!
+}
