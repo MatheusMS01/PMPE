@@ -3,6 +3,7 @@
 #include "MessageQueue.h"
 #include "ExecuteProgramPostponedProtocol.h"
 #include "NotifySchedulerProtocol.h"
+#include "TimestampProtocol.h"
 #include <vector>
 
 class Node
@@ -39,10 +40,12 @@ private:
    unsigned int m_x;
    unsigned int m_y;
    std::vector<Neighbor> m_neighborList;
+   bool m_waitingTimestamp;
    NotifySchedulerProtocol m_ns;
 
    void buildNeighborhood();
    void treat(ExecuteProgramPostponedProtocol epp);
    void treat(NotifySchedulerProtocol ns);
+   void treat(TimestampProtocol ts);
    void route(const std::string& pdu, int destinationNode);
 };

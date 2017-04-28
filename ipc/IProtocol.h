@@ -11,6 +11,7 @@ public:
       ExecuteProgramPostponed = 0,
       NotifyScheduler         = 1,
       Shutdown                = 2,
+      Timestamp               = 3,
    };
 
    using ParameterList = std::vector<std::string>;

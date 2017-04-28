@@ -10,6 +10,8 @@
 Scheduler::Scheduler()
    : m_messageQueue(MessageQueue::MainQueueKey)
    , m_nodeMap()
+   , m_pendingExecutionList()
+   , m_shutdown(false)
 {
 }
 
@@ -80,10 +82,36 @@ int Scheduler::execute()
          }
          break;
 
+         case IProtocol::Shutdown:
+         {
+            ShutdownProtocol sd;
+            treat(sd);
+         }
+         break;
+
          default:
          {
          }
          break;
+      }
+
+      if(m_shutdown)
+      {
+         bool canShutdown = true;
+         for(const auto& node : m_nodeMap)
+         {
+            if(node.second == Node::Busy)
+            {
+               canShutdown = false;
+               break;
+            }
+         }
+
+         if(canShutdown)
+         {
+            printStatistics();
+            break;
+         }
       }
    }
 
@@ -96,19 +124,15 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
    sleep(epp.getDelay());
    for(auto& node : m_nodeMap)
    {
+      epp.setDestinationNode(node.first);
+
       if(node.second == Node::Busy)
       {
-         // @TODO: Add to list
-         std::cout << "Node " << node.first << " is busy";
+         m_pendingExecutionList.push_back(epp);
          continue;
       }
 
-      epp.setDestinationNode(node.first);
-
-      // Write to node zero
-      m_messageQueue.write(epp.serialize(), MessageQueue::SchedulerId + 1);
-
-      node.second = Node::Busy;
+      executeProgramPostponed(epp);
    }
 }
 
@@ -126,4 +150,41 @@ void Scheduler::treat(NotifySchedulerProtocol& ns)
    message.append("makespan=" + std::to_string(makespan));
 
    std::cout << message << "\n";
+
+   for(auto& pendingExecution : m_pendingExecutionList)
+   {
+      if(pendingExecution.getDestinationNode() == ns.getNodeId())
+      {
+         executeProgramPostponed(pendingExecution);
+      }
+   }
+}
+
+void Scheduler::treat(ShutdownProtocol& sd)
+{
+   m_shutdown = true;
+
+}
+
+void Scheduler::executeProgramPostponed(ExecuteProgramPostponedProtocol& epp)
+{
+   if(m_shutdown)
+   {
+      std::cout << epp.getProgramName() << " will not be executed for node " +
+         std::to_string(epp.getDestinationNode()) + ". System is shuting down\n";
+      return;
+   }
+
+   // Write to node zero
+   if(m_messageQueue.write(epp.serialize(), MessageQueue::SchedulerId + 1))
+   {
+      m_nodeMap[epp.getDestinationNode()] = Node::Busy;
+   }
+}
+
+void Scheduler::printStatistics()
+{
+   // @TODO
+
+   std::cout << "Statistics\n";
 }

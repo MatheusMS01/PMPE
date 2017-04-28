@@ -18,8 +18,12 @@ void SIGCHLDHandler(int signal)
 
    while ((pid = waitpid(-1, &status, WNOHANG)) != -1)
    {
-      // MessageQueue messageQueue(MessageQueue::MainQueueKey);
-      // messageQueue.write(std::to_string(time(NULL)), g_id);
+      MessageQueue messageQueue(MessageQueue::MainQueueKey);
+
+      TimestampProtocol ts;
+      ts.setTimestamp(time(NULL));
+
+      messageQueue.write(ts.serialize(), g_id);
    }
 }
 
@@ -27,9 +31,11 @@ Node::Node(int id)
    : m_id(id)
    , m_processType(id + MessageQueue::SchedulerId + 1)
    , m_messageQueue(MessageQueue::MainQueueKey)
+   , m_waitingTimestamp(false)
    , m_ns()
 {
-   g_id = id;
+   g_id = m_processType;
+
    m_x = id % 4;
    m_y = id / 4;
 
@@ -73,16 +79,6 @@ void Node::execute()
       {
          continue;
       }
-
-      if(message.find(";") == std::string::npos)
-      {
-         // m_ns.setEndTime(std::stol(message));
-         // route(m_ns.serialize(), 0);
-
-         continue;
-      }
-
-      std::cout << message << "\n";
       
       switch(Utils::getProtocolId(message))
       {
@@ -99,6 +95,14 @@ void Node::execute()
             NotifySchedulerProtocol ns;
             ns.parse(message);
             treat(ns);
+         }
+         break;
+
+         case IProtocol::Timestamp:
+         {
+            TimestampProtocol ts;
+            ts.parse(message);
+            treat(ts);
          }
          break;
 
@@ -119,24 +123,24 @@ void Node::treat(ExecuteProgramPostponedProtocol epp)
       m_ns.setProgramName(epp.getProgramName());
       m_ns.setBeginTime(time(NULL));
       
+      pid_t pid;
+
+      pid = fork();
+
+      if(pid == -1)
       {
-         pid_t pid;
-
-         pid = fork();
-
-         if(pid == -1)
-         {
-            return;
-         }
-
-         if(pid == 0)
-         {
-            // Run Program
-            sleep(1);
-
-            _exit(0);
-         }
+         return;
       }
+
+      if(pid == 0)
+      {
+         // @TODO: Run Program
+         sleep(3);
+
+         _exit(0);
+      }
+
+      m_waitingTimestamp = true;
    }
    else
    {
@@ -156,11 +160,15 @@ void Node::treat(NotifySchedulerProtocol ns)
    }
 }
 
-// void Node::finish()
-// {
-//    m_ns.setEndTime(time(NULL));
-//    route(m_ns.serialize(), 0);
-// }
+void Node::treat(TimestampProtocol ts)
+{
+   if(m_waitingTimestamp)
+   {
+      m_waitingTimestamp = false;
+      m_ns.setEndTime(ts.getTimestamp());
+      route(m_ns.serialize(), 0);      
+   }
+}
 
 void Node::route(const std::string& pdu, int destinationNode)
 {
