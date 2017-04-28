@@ -152,11 +152,13 @@ void Scheduler::treat(NotifySchedulerProtocol& ns)
 
    std::cout << message << "\n";
 
-   for(auto& pendingExecution : m_pendingExecutionList)
+   for(size_t it = 0; it < m_pendingExecutionList.size(); ++it)
    {
-      if(pendingExecution.getDestinationNode() == ns.getNodeId())
+      if(m_pendingExecutionList.at(it).getDestinationNode() == ns.getNodeId())
       {
-         executeProgramPostponed(pendingExecution);
+         executeProgramPostponed(m_pendingExecutionList.at(it));
+         m_pendingExecutionList.erase(m_pendingExecutionList.begin() + it);
+         break;
       }
    }
 }

@@ -7,7 +7,7 @@
 #include "ShutdownProtocol.h"
 
 #include <map>
-#include <list>
+#include <vector>
 
 class Scheduler
 {
@@ -20,7 +20,7 @@ public:
 private:
    MessageQueue m_messageQueue;
    std::map<int, int> m_nodeMap;
-   std::list<ExecuteProgramPostponedProtocol> m_pendingExecutionList;
+   std::vector<ExecuteProgramPostponedProtocol> m_pendingExecutionList;
    bool m_shutdown;
 
    bool createNodes();
