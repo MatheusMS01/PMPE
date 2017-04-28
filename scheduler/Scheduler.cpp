@@ -61,6 +61,7 @@ int Scheduler::execute()
       std::string message;
       if(!m_messageQueue.read(message, MessageQueue::SchedulerId))
       {
+         std::cout << "[Scheduler] Failed to read message\n";
          continue;
       }
 
