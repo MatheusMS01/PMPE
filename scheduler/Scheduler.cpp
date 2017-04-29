@@ -107,7 +107,6 @@ int Scheduler::execute()
          {
             if(node.second == Node::Busy)
             {
-               std::cout << "Node " << node.first << "is still busy\n";
                canShutdown = false;
                break; // for
             }
@@ -140,6 +139,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
       m_pendingExecutionList.push_back(epp);
       return;
    }
+
    epp.setSubmittalTime(time(NULL));
    sleep(epp.getDelay());
    for(auto& node : m_nodeMap)
@@ -194,6 +194,11 @@ void Scheduler::treat(ShutdownProtocol& sd)
 
 void Scheduler::executeProgramPostponed(ExecuteProgramPostponedProtocol& epp)
 {
+   if(m_shutdown)
+   {
+      return;
+   }
+
    // Write to node zero
    if(m_messageQueue.write(epp.serialize(), MessageQueue::SchedulerId + 1))
    {
