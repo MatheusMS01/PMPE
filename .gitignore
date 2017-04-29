@@ -1,3 +1,4 @@
 *.o
 escalonador
 executa_postergado
+shutdown

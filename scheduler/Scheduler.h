@@ -21,6 +21,8 @@ private:
    MessageQueue m_messageQueue;
    std::map<int, int> m_nodeMap;
    std::vector<ExecuteProgramPostponedProtocol> m_pendingExecutionList;
+   std::vector<pid_t> m_childPIDList;
+   std::vector<NotifySchedulerProtocol> m_executionLogList;
    bool m_shutdown;
 
    bool createNodes();

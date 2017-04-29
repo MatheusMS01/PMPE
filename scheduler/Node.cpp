@@ -122,6 +122,8 @@ void Node::treat(ExecuteProgramPostponedProtocol epp)
       m_ns.setDelay(epp.getDelay());
       m_ns.setProgramName(epp.getProgramName());
       m_ns.setBeginTime(time(NULL));
+      m_ns.setSubmittalTime(epp.getSubmittalTime());
+      m_ns.setPID(getpid());
       
       pid_t pid;
 
@@ -166,7 +168,8 @@ void Node::treat(TimestampProtocol ts)
    {
       m_waitingTimestamp = false;
       m_ns.setEndTime(ts.getTimestamp());
-      route(m_ns.serialize(), 0);      
+      // std::cout << m_ns.serialize() << "\n";
+      route(m_ns.serialize(), 0);
    }
 }
 

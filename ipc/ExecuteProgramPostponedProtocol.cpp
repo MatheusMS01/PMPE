@@ -25,6 +25,12 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
 
    switch(parameterList.size() - 1)
    {
+      case SubmittalTime:
+      {
+         m_parameterList.at(SubmittalTime) = parameterList.at(SubmittalTime);
+      }
+      // no break
+      
       case DestinationNode:
       {
          m_parameterList.at(DestinationNode) = parameterList.at(DestinationNode);
@@ -80,6 +86,23 @@ int ExecuteProgramPostponedProtocol::getDestinationNode()
    try
    {
       return std::stoi(m_parameterList.at(DestinationNode));
+   }
+   catch(...)
+   {
+      return -1;
+   }
+}
+
+void ExecuteProgramPostponedProtocol::setSubmittalTime(const long int submittalTime)
+{
+   m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
+}
+
+long int ExecuteProgramPostponedProtocol::getSubmittalTime()
+{
+   try
+   {
+      return std::stol(m_parameterList.at(SubmittalTime));
    }
    catch(...)
    {

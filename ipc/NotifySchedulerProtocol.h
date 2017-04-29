@@ -8,17 +8,22 @@ public:
    enum ParameterId : unsigned int
    {
       NodeId           = 0,
-      BeginTime        = 1,
-      EndTime          = 2,
-      Delay            = 3,
-      ProgramName      = 4,
-      ParametersNumber = ProgramName + 1, 
+      SubmittalTime    = 1,
+      BeginTime        = 2,
+      EndTime          = 3,
+      Delay            = 4,
+      ProgramName      = 5,
+      PID              = 6,
+      ParametersNumber = PID + 1, 
    };
 
    NotifySchedulerProtocol();
 
    int getNodeId();
    void setNodeId(int nodeId);
+
+   long int getSubmittalTime();
+   void setSubmittalTime(const long int submittalTime);
 
    long int getBeginTime();
    void setBeginTime(const long int beginTime);
@@ -31,4 +36,7 @@ public:
 
    void setProgramName(const std::string& programName);
    std::string& getProgramName();
+
+   void setPID(const pid_t pid);
+   pid_t getPID();
 };

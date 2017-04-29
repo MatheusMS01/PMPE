@@ -64,6 +64,11 @@ bool MessageQueue::read(std::string& message, const unsigned int type)
    return false;
 }
 
+bool MessageQueue::remove()
+{
+   return msgctl(m_id, IPC_RMID, NULL) == -1;
+}
+
 int MessageQueue::getId()
 {
    return m_id;

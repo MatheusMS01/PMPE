@@ -8,9 +8,10 @@ public:
    enum ParameterId : unsigned int
    {
       Delay            = 0,
-      ProgramName      = 1,      
+      ProgramName      = 1,
       DestinationNode  = 2,
-      ParametersNumber = DestinationNode + 1, 
+      SubmittalTime    = 3,
+      ParametersNumber = SubmittalTime + 1, 
    };
 
    ExecuteProgramPostponedProtocol();
@@ -25,4 +26,7 @@ public:
 
    void setDestinationNode(int destinationNode);
    int getDestinationNode();
+
+   void setSubmittalTime(const long int submittalTime);
+   long int getSubmittalTime();
 };

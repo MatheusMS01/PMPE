@@ -22,6 +22,23 @@ int NotifySchedulerProtocol::getNodeId()
    }
 }
 
+void NotifySchedulerProtocol::setSubmittalTime(const long int submittalTime)
+{
+   m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
+}
+
+long int NotifySchedulerProtocol::getSubmittalTime()
+{
+   try
+   {
+      return std::stol(m_parameterList.at(SubmittalTime));
+   }
+   catch(...)
+   {
+      return -1;
+   }
+}
+
 void NotifySchedulerProtocol::setBeginTime(const long int beginTime)
 {
    m_parameterList.at(BeginTime) = std::to_string(beginTime);
@@ -81,4 +98,21 @@ void NotifySchedulerProtocol::setProgramName(const std::string& programName)
 std::string& NotifySchedulerProtocol::getProgramName()
 {
    return m_parameterList.at(ProgramName);
+}
+
+void NotifySchedulerProtocol::setPID(const pid_t pid)
+{
+    m_parameterList.at(PID) = std::to_string(pid);
+}
+
+pid_t NotifySchedulerProtocol::getPID()
+{
+   try
+   {
+      return std::stoi(m_parameterList.at(PID));
+   }
+   catch(...)
+   {
+      return -1;
+   }
 }
