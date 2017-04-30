@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <ctime>
+#include <iomanip>
 
 Scheduler::Scheduler()
    : m_messageQueue(MessageQueue::MainQueueKey)
@@ -119,6 +120,17 @@ int Scheduler::execute()
                kill(childPID, SIGTERM);
             }
 
+            if(!m_pendingExecutionList.empty())
+            {
+               std::string message;
+               message.append("These programs will not be executed:\n");
+               for(auto pendingExecution : m_pendingExecutionList)
+               {
+                  message.append(pendingExecution.getProgramName() + "\n");
+               }
+               std::cout << message;
+            }
+
             printStatistics();
 
             m_messageQueue.remove();
@@ -131,7 +143,6 @@ int Scheduler::execute()
    return 0;
 }
 
-// Send message to all nodes via node zero
 void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 {
    if(m_shutdown)
@@ -142,13 +153,19 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 
    epp.setSubmittalTime(time(NULL));
    sleep(epp.getDelay());
+
+   bool alreadyInserted = false;
    for(auto& node : m_nodeMap)
    {
       epp.setDestinationNode(node.first);
 
       if(node.second == Node::Busy)
       {
-         m_pendingExecutionList.push_back(epp);
+         if(!alreadyInserted)
+         {
+            m_pendingExecutionList.push_back(epp);
+            alreadyInserted = true;
+         }
          continue;
       }
 
@@ -222,21 +239,21 @@ void Scheduler::printStatistics()
 
       auto submittalTime = executionLog.getSubmittalTime();
       struct tm *submittalTimeInfo = localtime(&submittalTime);
-      statistics.append(std::to_string(submittalTimeInfo->tm_hour) + ":");
-      statistics.append(std::to_string(submittalTimeInfo->tm_min) + ":");
-      statistics.append(std::to_string(submittalTimeInfo->tm_sec) + "\t\t");
+      statistics.append((submittalTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_hour) + ":");
+      statistics.append((submittalTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_min) + ":");
+      statistics.append((submittalTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_sec) + "\t");
 
       auto beginTime = executionLog.getBeginTime();
       struct tm *beginTimeInfo = localtime(&beginTime);
-      statistics.append(std::to_string(beginTimeInfo->tm_hour) + ":");
-      statistics.append(std::to_string(beginTimeInfo->tm_min) + ":");
-      statistics.append(std::to_string(beginTimeInfo->tm_sec) + "\t\t");
+      statistics.append((beginTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_hour) + ":");
+      statistics.append((beginTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_min) + ":");
+      statistics.append((beginTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_sec) + "\t");
 
       auto endTime = executionLog.getEndTime();
       struct tm *endTimeInfo = localtime(&endTime);
-      statistics.append(std::to_string(endTimeInfo->tm_hour) + ":");
-      statistics.append(std::to_string(endTimeInfo->tm_min) + ":");
-      statistics.append(std::to_string(endTimeInfo->tm_sec) + "\n");
+      statistics.append((endTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_hour) + ":");
+      statistics.append((endTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_min) + ":");
+      statistics.append((endTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_sec) + "\n");
    }
 
    std::cout << statistics << "\n";
