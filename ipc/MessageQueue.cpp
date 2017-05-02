@@ -37,9 +37,7 @@ bool MessageQueue::write(const std::string& message, const unsigned int type)
 }
 
 /**
-   Blocks caller until there is a specified message type to read;
-   If no type is specified, then read first message
-   in Queue by default
+   Blocks caller until there is an specified message type to read;
 
    @param reference of message to be read,
           type to be read
