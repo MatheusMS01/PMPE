@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sys/types.h>
 #include "IProtocol.h"
 
 class NotifySchedulerProtocol : public IProtocol
