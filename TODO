@@ -2,3 +2,4 @@
 2) O escalonador deve realizar sleep? Ou contornar de algum jeito a espera?
 3) Processos devem ser executados se forem disparados antes do shutdown?
 4) O PID que deve ser impresso é do processo filho ou do gerente?
+5) Se UM gerente não executar um programa e for realizado shutdown, isso significa que o programa deverá ser impresso na lista de não executados?
