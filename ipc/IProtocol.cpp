@@ -4,14 +4,14 @@
 
 #include <algorithm>
 
-IProtocol::IProtocol(int id, unsigned int parametersNumber)
+IProtocol::IProtocol(const int id, const unsigned int parametersNumber)
    : m_id(id)
    , m_parametersNumber(parametersNumber)
 {
    m_parameterList.resize(parametersNumber);
 }
 
-std::string IProtocol::serialize()
+std::string IProtocol::serialize() const
 {
    std::string pdu;
 

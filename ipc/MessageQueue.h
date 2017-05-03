@@ -9,8 +9,8 @@
 class MessageQueue
 {
 public:
-   MessageQueue(key_t key);
-   ~MessageQueue();
+   explicit MessageQueue(key_t key);
+   ~MessageQueue() = default;
 
    enum QueueKey : key_t
    {
@@ -26,7 +26,6 @@ public:
    bool read(std::string& message, const unsigned int type);
    bool remove();
 
-   int getId();
 private:
    struct Buffer
    {

@@ -13,6 +13,6 @@ public:
 
    TimestampProtocol();
 
-   long int getTimestamp();
+   long int getTimestamp() const;
    void setTimestamp(const long int timestamp);
 };

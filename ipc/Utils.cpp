@@ -8,12 +8,28 @@ int Utils::getProtocolId(const std::string& pdu)
       return -1;
    }
 
-   auto parameterList = getPduContent(pdu);
+   const auto parameterList = getPduContent(pdu);
 
-   return std::stoi(parameterList.at(0));
+   if(parameterList.empty())
+   {
+      return -1;
+   }
+
+   int protocolId = 0;
+   try
+   {
+      protocolId = std::stoi(parameterList.at(0));
+   }
+   catch(...)
+   {
+      protocolId = -1;
+   }
+
+   return protocolId;
 }
 
-unsigned int Utils::distanceBetweenNodes(int nodeId1, int nodeId2)
+// @TODO: Use Torus topology to calculate distance between nodes
+unsigned int Utils::distanceBetweenNodes(const int nodeId1, const int nodeId2)
 {
    int x1 = nodeId1 % 4;
    int y1 = nodeId1 / 4;

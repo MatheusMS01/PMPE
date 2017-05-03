@@ -10,7 +10,7 @@ void TimestampProtocol::setTimestamp(const long int timestamp)
    m_parameterList.at(Timestamp) = std::to_string(timestamp);
 }
 
-long int TimestampProtocol::getTimestamp()
+long int TimestampProtocol::getTimestamp() const
 {
    try
    {

@@ -19,24 +19,24 @@ public:
 
    NotifySchedulerProtocol();
 
-   int getNodeId();
-   void setNodeId(int nodeId);
+   int getNodeId() const;
+   void setNodeId(const int nodeId);
 
-   long int getSubmittalTime();
+   long int getSubmittalTime() const;
    void setSubmittalTime(const long int submittalTime);
 
-   long int getBeginTime();
+   long int getBeginTime() const;
    void setBeginTime(const long int beginTime);
 
-   long int getEndTime();
+   long int getEndTime() const;
    void setEndTime(const long int endTime);
 
-   void setDelay(int delay);
-   int getDelay();
+   int getDelay() const;
+   void setDelay(const int delay);
 
+   std::string getProgramName() const;
    void setProgramName(const std::string& programName);
-   std::string& getProgramName();
 
+   pid_t getPID() const;
    void setPID(const pid_t pid);
-   pid_t getPID();
 };

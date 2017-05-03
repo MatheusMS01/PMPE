@@ -20,10 +20,6 @@ Scheduler::Scheduler()
 {
 }
 
-Scheduler::~Scheduler()
-{
-}
-
 bool Scheduler::createNodes()
 {
    pid_t pid;
@@ -47,7 +43,7 @@ bool Scheduler::createNodes()
       {
          m_childPIDList.push_back(pid);
          m_nodeMap.insert(std::make_pair(nodeId, Node::Free));
-         // @TODO: Not working on OSX
+         // @FIXME: Not working on OSX
          wait();
       }
    }
@@ -106,6 +102,7 @@ int Scheduler::execute()
          bool canShutdown = true;
          for(const auto& node : m_nodeMap)
          {
+            // Don't shutdown until all processes are done
             if(node.second == Node::Busy)
             {
                canShutdown = false;
@@ -115,7 +112,8 @@ int Scheduler::execute()
 
          if(canShutdown)
          {
-            for(auto childPID : m_childPIDList)
+            // Kill all children processes
+            for(const auto childPID : m_childPIDList)
             {
                kill(childPID, SIGTERM);
             }
@@ -154,18 +152,13 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
    epp.setSubmittalTime(time(NULL));
    sleep(epp.getDelay());
 
-   bool alreadyInserted = false;
    for(auto& node : m_nodeMap)
    {
       epp.setDestinationNode(node.first);
 
       if(node.second == Node::Busy)
       {
-         if(!alreadyInserted)
-         {
-            m_pendingExecutionList.push_back(epp);
-            alreadyInserted = true;
-         }
+         m_pendingExecutionList.push_back(epp);
          continue;
       }
 
@@ -174,10 +167,11 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 }
 
 
-void Scheduler::treat(NotifySchedulerProtocol& ns)
+void Scheduler::treat(const NotifySchedulerProtocol& ns)
 {
-   m_executionLogList.push_back(ns);
    m_nodeMap[ns.getNodeId()] = Node::Free;
+
+   m_executionLogList.push_back(ns);
 
    const auto makespan = ns.getEndTime() - ns.getBeginTime();
 
@@ -203,13 +197,13 @@ void Scheduler::treat(NotifySchedulerProtocol& ns)
    }
 }
 
-void Scheduler::treat(ShutdownProtocol& sd)
+void Scheduler::treat(const ShutdownProtocol& sd)
 {
    m_shutdown = true;
 
 }
 
-void Scheduler::executeProgramPostponed(ExecuteProgramPostponedProtocol& epp)
+void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& epp)
 {
    if(m_shutdown)
    {
@@ -226,10 +220,10 @@ void Scheduler::executeProgramPostponed(ExecuteProgramPostponedProtocol& epp)
 void Scheduler::printStatistics()
 {
    std::string statistics;
-   statistics.append("\n\n\n-----------------------------Statistics-------------------------\n");
+   statistics.append("\n\n-----------------------------Statistics-------------------------\n");
    statistics.append("PID\tProgram Name\tSubmittal Time\tBegin Time\tEnd Time\n");
    statistics.append("----------------------------------------------------------------\n");
-   for(auto& executionLog : m_executionLogList)
+   for(const auto& executionLog : m_executionLogList)
    {
       statistics.append(std::to_string(executionLog.getPID()));
       statistics.append("\t");
@@ -237,20 +231,20 @@ void Scheduler::printStatistics()
       statistics.append(executionLog.getProgramName());
       statistics.append("\t");
 
-      auto submittalTime = executionLog.getSubmittalTime();
-      struct tm *submittalTimeInfo = localtime(&submittalTime);
+      const auto submittalTime = executionLog.getSubmittalTime();
+      const auto *submittalTimeInfo = localtime(&submittalTime);
       statistics.append((submittalTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_hour) + ":");
       statistics.append((submittalTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_min) + ":");
       statistics.append((submittalTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_sec) + "\t");
 
-      auto beginTime = executionLog.getBeginTime();
-      struct tm *beginTimeInfo = localtime(&beginTime);
+      const auto beginTime = executionLog.getBeginTime();
+      const auto *beginTimeInfo = localtime(&beginTime);
       statistics.append((beginTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_hour) + ":");
       statistics.append((beginTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_min) + ":");
       statistics.append((beginTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(beginTimeInfo->tm_sec) + "\t");
 
-      auto endTime = executionLog.getEndTime();
-      struct tm *endTimeInfo = localtime(&endTime);
+      const auto endTime = executionLog.getEndTime();
+      const auto *endTimeInfo = localtime(&endTime);
       statistics.append((endTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_hour) + ":");
       statistics.append((endTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_min) + ":");
       statistics.append((endTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(endTimeInfo->tm_sec) + "\n");

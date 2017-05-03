@@ -15,8 +15,8 @@ public:
       Busy = 1,
    };
 
-   Node(int id);
-   ~Node();
+   explicit Node(const int id);
+   ~Node() = default;
 
    void execute();
 private:
@@ -44,8 +44,8 @@ private:
    NotifySchedulerProtocol m_ns;
 
    void buildNeighborhood();
-   void treat(ExecuteProgramPostponedProtocol epp);
-   void treat(NotifySchedulerProtocol ns);
-   void treat(TimestampProtocol ts);
-   void route(const std::string& pdu, int destinationNode);
+   void treat(const ExecuteProgramPostponedProtocol& epp);
+   void treat(const NotifySchedulerProtocol& ns);
+   void treat(const TimestampProtocol& ts);
+   void route(const std::string& pdu, const int destinationNode);
 };

@@ -13,7 +13,7 @@ class Scheduler
 {
 public:
    Scheduler();
-   ~Scheduler();
+   ~Scheduler() = default;
 
    int execute();
 
@@ -28,9 +28,9 @@ private:
    bool createNodes();
 
    void treat(ExecuteProgramPostponedProtocol& eep);
-   void treat(NotifySchedulerProtocol& ns);
-   void treat(ShutdownProtocol& sd);
+   void treat(const NotifySchedulerProtocol& ns);
+   void treat(const ShutdownProtocol& sd);
 
-   void executeProgramPostponed(ExecuteProgramPostponedProtocol& eep);
+   void executeProgramPostponed(const ExecuteProgramPostponedProtocol& eep);
    void printStatistics();
 };

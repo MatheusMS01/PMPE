@@ -9,32 +9,31 @@
 #include <iostream>
 #include <ctime>
 
-int g_id;
+int g_type;
 
 void SIGCHLDHandler(int signal)
 {
-   pid_t pid;
    int status;
 
-   while ((pid = waitpid(-1, &status, WNOHANG)) != -1)
+   while(waitpid(-1, &status, WNOHANG) != -1)
    {
       MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
       TimestampProtocol ts;
       ts.setTimestamp(time(NULL));
 
-      messageQueue.write(ts.serialize(), g_id);
+      messageQueue.write(ts.serialize(), g_type);
    }
 }
 
-Node::Node(int id)
+Node::Node(const int id)
    : m_id(id)
    , m_processType(id + MessageQueue::SchedulerId + 1)
    , m_messageQueue(MessageQueue::MainQueueKey)
    , m_waitingTimestamp(false)
    , m_ns()
 {
-   g_id = m_processType;
+   g_type = m_processType;
 
    m_x = id % 4;
    m_y = id / 4;
@@ -42,17 +41,12 @@ Node::Node(int id)
    buildNeighborhood();
 
    // Set action for SIGCHLD
-
    struct sigaction sa;
 
    memset(&sa, 0, sizeof(sa));
    sa.sa_handler = SIGCHLDHandler;
 
    sigaction(SIGCHLD, &sa, NULL);
-}
-
-Node::~Node()
-{
 }
 
 void Node::buildNeighborhood()
@@ -114,7 +108,7 @@ void Node::execute()
    }
 }
 
-void Node::treat(ExecuteProgramPostponedProtocol epp)
+void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 {
    if(epp.getDestinationNode() == m_id)
    {
@@ -150,7 +144,7 @@ void Node::treat(ExecuteProgramPostponedProtocol epp)
    }
 }
 
-void Node::treat(NotifySchedulerProtocol ns)
+void Node::treat(const NotifySchedulerProtocol& ns)
 {
    if(m_id == 0)
    {
@@ -162,7 +156,7 @@ void Node::treat(NotifySchedulerProtocol ns)
    }
 }
 
-void Node::treat(TimestampProtocol ts)
+void Node::treat(const TimestampProtocol& ts)
 {
    if(m_waitingTimestamp)
    {
@@ -173,7 +167,7 @@ void Node::treat(TimestampProtocol ts)
    }
 }
 
-void Node::route(const std::string& pdu, int destinationNode)
+void Node::route(const std::string& pdu, const int destinationNode)
 {
    for(const auto& neighbor : m_neighborList)
    {
@@ -188,6 +182,7 @@ void Node::route(const std::string& pdu, int destinationNode)
    // Find best neighbor to route to
    auto bestNeighbor = std::make_pair(m_neighborList.front(),
       Utils::distanceBetweenNodes(m_neighborList.front().id, destinationNode));
+
    for(const auto& neighbor : m_neighborList)
    {
       auto distance = Utils::distanceBetweenNodes(neighbor.id, destinationNode);

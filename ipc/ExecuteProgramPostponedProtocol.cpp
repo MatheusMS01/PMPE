@@ -54,7 +54,7 @@ void ExecuteProgramPostponedProtocol::setDelay(int delay)
    m_parameterList.at(Delay) = std::to_string(delay);
 }
 
-int ExecuteProgramPostponedProtocol::ExecuteProgramPostponedProtocol::getDelay()
+int ExecuteProgramPostponedProtocol::ExecuteProgramPostponedProtocol::getDelay() const
 {
    try
    {
@@ -71,7 +71,7 @@ void ExecuteProgramPostponedProtocol::setProgramName(const std::string& programN
    m_parameterList.at(ProgramName) = programName;
 }
 
-std::string& ExecuteProgramPostponedProtocol::getProgramName()
+std::string ExecuteProgramPostponedProtocol::getProgramName() const
 {
    return m_parameterList.at(ProgramName);
 }
@@ -81,7 +81,7 @@ void ExecuteProgramPostponedProtocol::setDestinationNode(int destinationNode)
    m_parameterList.at(DestinationNode) = std::to_string(destinationNode);
 }
 
-int ExecuteProgramPostponedProtocol::getDestinationNode()
+int ExecuteProgramPostponedProtocol::getDestinationNode() const
 {
    try
    {
@@ -98,7 +98,7 @@ void ExecuteProgramPostponedProtocol::setSubmittalTime(const long int submittalT
    m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
 }
 
-long int ExecuteProgramPostponedProtocol::getSubmittalTime()
+long int ExecuteProgramPostponedProtocol::getSubmittalTime() const
 {
    try
    {

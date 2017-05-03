@@ -2,14 +2,9 @@
 
 MessageQueue::MessageQueue(key_t key)
    : m_key(key)
-   , m_id(0)
 {
    // Open Message Queue
    m_id = msgget(m_key, IPC_CREAT | 0777);
-}
-
-MessageQueue::~MessageQueue()
-{
 }
 
 /**
@@ -65,9 +60,4 @@ bool MessageQueue::read(std::string& message, const unsigned int type)
 bool MessageQueue::remove()
 {
    return msgctl(m_id, IPC_RMID, NULL) == -1;
-}
-
-int MessageQueue::getId()
-{
-   return m_id;
 }

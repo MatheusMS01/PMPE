@@ -10,7 +10,7 @@ void NotifySchedulerProtocol::setNodeId(int nodeId)
    m_parameterList.at(NodeId) = std::to_string(nodeId);
 }
 
-int NotifySchedulerProtocol::getNodeId()
+int NotifySchedulerProtocol::getNodeId() const
 {
    try
    {
@@ -27,7 +27,7 @@ void NotifySchedulerProtocol::setSubmittalTime(const long int submittalTime)
    m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
 }
 
-long int NotifySchedulerProtocol::getSubmittalTime()
+long int NotifySchedulerProtocol::getSubmittalTime() const
 {
    try
    {
@@ -44,7 +44,7 @@ void NotifySchedulerProtocol::setBeginTime(const long int beginTime)
    m_parameterList.at(BeginTime) = std::to_string(beginTime);
 }
 
-long int NotifySchedulerProtocol::getBeginTime()
+long int NotifySchedulerProtocol::getBeginTime() const
 {
    try
    {
@@ -61,7 +61,7 @@ void NotifySchedulerProtocol::setEndTime(const long int endTime)
    m_parameterList.at(EndTime) = std::to_string(endTime);
 }
 
-long int NotifySchedulerProtocol::getEndTime()
+long int NotifySchedulerProtocol::getEndTime() const
 {
    try
    {
@@ -78,7 +78,7 @@ void NotifySchedulerProtocol::setDelay(int delay)
    m_parameterList.at(Delay) = std::to_string(delay);
 }
 
-int NotifySchedulerProtocol::getDelay()
+int NotifySchedulerProtocol::getDelay() const
 {
    try
    {
@@ -95,7 +95,7 @@ void NotifySchedulerProtocol::setProgramName(const std::string& programName)
    m_parameterList.at(ProgramName) = programName;
 }
 
-std::string& NotifySchedulerProtocol::getProgramName()
+std::string NotifySchedulerProtocol::getProgramName() const
 {
    return m_parameterList.at(ProgramName);
 }
@@ -105,7 +105,7 @@ void NotifySchedulerProtocol::setPID(const pid_t pid)
     m_parameterList.at(PID) = std::to_string(pid);
 }
 
-pid_t NotifySchedulerProtocol::getPID()
+pid_t NotifySchedulerProtocol::getPID() const
 {
    try
    {
