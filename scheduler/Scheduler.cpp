@@ -7,8 +7,24 @@
 #include <algorithm>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <ctime>
 #include <iomanip>
+#include <cstring>
+
+namespace scheduler
+{
+   void SIGCHLDHandler(int signal)
+   {
+      int status;
+
+      while(waitpid(-1, &status, WNOHANG) != -1)
+      {
+         // Do nothing
+      }
+   }
+}
 
 Scheduler::Scheduler()
    : m_messageQueue(MessageQueue::MainQueueKey)
@@ -18,6 +34,13 @@ Scheduler::Scheduler()
    , m_executionLogList()
    , m_shutdown(false)
 {
+      // Set action for SIGCHLD
+   struct sigaction sa;
+
+   memset(&sa, 0, sizeof(sa));
+   sa.sa_handler = scheduler::SIGCHLDHandler;
+
+   sigaction(SIGCHLD, &sa, NULL);
 }
 
 bool Scheduler::createNodes()
@@ -43,8 +66,6 @@ bool Scheduler::createNodes()
       {
          m_childPIDList.push_back(pid);
          m_nodeMap.insert(std::make_pair(nodeId, Node::Free));
-         // @FIXME: Not working on OSX
-         wait();
       }
    }
 
@@ -139,7 +160,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
    epp.setSubmittalTime(time(NULL));
    sleep(epp.getDelay());
 
-   for(auto& node : m_nodeMap)
+   for(const auto& node : m_nodeMap)
    {
       epp.setDestinationNode(node.first);
 

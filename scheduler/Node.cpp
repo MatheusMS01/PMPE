@@ -12,20 +12,24 @@
 
 int g_type;
 
-void SIGCHLDHandler(int signal)
+namespace node
 {
-   int status;
-
-   while(waitpid(-1, &status, WNOHANG) != -1)
+   void SIGCHLDHandler(int signal)
    {
-      MessageQueue messageQueue(MessageQueue::MainQueueKey);
+      int status;
 
-      TimestampProtocol ts;
-      ts.setTimestamp(time(NULL));
+      while(waitpid(-1, &status, WNOHANG) != -1)
+      {
+         MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
-      messageQueue.write(ts.serialize(), g_type);
+         TimestampProtocol ts;
+         ts.setTimestamp(time(NULL));
+
+         messageQueue.write(ts.serialize(), g_type);
+      }
    }
 }
+
 
 Node::Node(const int id)
    : m_id(id)
@@ -45,7 +49,7 @@ Node::Node(const int id)
    struct sigaction sa;
 
    memset(&sa, 0, sizeof(sa));
-   sa.sa_handler = SIGCHLDHandler;
+   sa.sa_handler = node::SIGCHLDHandler;
 
    sigaction(SIGCHLD, &sa, NULL);
 }
