@@ -49,7 +49,7 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
    return true;
 }
 
-void ExecuteProgramPostponedProtocol::setDelay(int delay)
+void ExecuteProgramPostponedProtocol::setDelay(const int delay)
 {
    m_parameterList.at(Delay) = std::to_string(delay);
 }
@@ -76,7 +76,7 @@ std::string ExecuteProgramPostponedProtocol::getProgramName() const
    return m_parameterList.at(ProgramName);
 }
 
-void ExecuteProgramPostponedProtocol::setDestinationNode(int destinationNode)
+void ExecuteProgramPostponedProtocol::setDestinationNode(const int destinationNode)
 {
    m_parameterList.at(DestinationNode) = std::to_string(destinationNode);
 }

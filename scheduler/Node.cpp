@@ -8,6 +8,7 @@
 #include <cstring>
 #include <iostream>
 #include <ctime>
+#include <algorithm>
 
 int g_type;
 
@@ -131,7 +132,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       if(pid == 0)
       {
          // @TODO: Run Program
-         sleep(3);
+         sleep(1);
 
          _exit(0);
       }
@@ -162,20 +163,20 @@ void Node::treat(const TimestampProtocol& ts)
    {
       m_waitingTimestamp = false;
       m_ns.setEndTime(ts.getTimestamp());
-      // std::cout << m_ns.serialize() << "\n";
       route(m_ns.serialize(), 0);
    }
 }
 
 void Node::route(const std::string& pdu, const int destinationNode)
 {
-   for(const auto& neighbor : m_neighborList)
+   const auto neighborItr = find_if(m_neighborList.begin(), m_neighborList.end(), [&] (const Neighbor& neighbor) {
+      return neighbor.id == destinationNode;
+   });
+
+   if(neighborItr != m_neighborList.end())
    {
-      if(destinationNode == neighbor.id)
-      {
-         m_messageQueue.write(pdu, neighbor.processType);
-         return;
-      }
+      m_messageQueue.write(pdu, neighborItr->processType);
+      return;
    }
 
    // Destination node is not on neighborhood

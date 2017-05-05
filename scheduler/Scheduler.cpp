@@ -4,7 +4,7 @@
 #include "Utils.h"
 
 #include <iostream>
-
+#include <algorithm>
 #include <unistd.h>
 #include <signal.h>
 #include <ctime>
@@ -99,16 +99,12 @@ int Scheduler::execute()
 
       if(m_shutdown)
       {
-         bool canShutdown = true;
-         for(const auto& node : m_nodeMap)
+         const auto busyNode = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& node)
          {
-            // Don't shutdown until all processes are done
-            if(node.second == Node::Busy)
-            {
-               canShutdown = false;
-               break; // for
-            }
-         }
+            return node.second == Node::Busy;
+         });
+
+         const auto canShutdown = (busyNode == m_nodeMap.end());
 
          if(canShutdown)
          {
@@ -118,16 +114,7 @@ int Scheduler::execute()
                kill(childPID, SIGTERM);
             }
 
-            if(!m_pendingExecutionList.empty())
-            {
-               std::string message;
-               message.append("These programs will not be executed:\n");
-               for(auto pendingExecution : m_pendingExecutionList)
-               {
-                  message.append(pendingExecution.getProgramName() + "\n");
-               }
-               std::cout << message;
-            }
+            // @TODO: Show programs that were not executed
 
             printStatistics();
 
@@ -145,7 +132,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 {
    if(m_shutdown)
    {
-      m_pendingExecutionList.push_back(epp);
+      // m_pendingExecutionList.push_back(epp);
       return;
    }
 

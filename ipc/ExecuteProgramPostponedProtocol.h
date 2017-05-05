@@ -18,13 +18,13 @@ public:
 
    bool parse(const std::string& pdu);
 
-   void setDelay(int delay);
+   void setDelay(const int delay);
    int getDelay() const;
 
    void setProgramName(const std::string& programName);
    std::string getProgramName() const;
 
-   void setDestinationNode(int destinationNode);
+   void setDestinationNode(const int destinationNode);
    int getDestinationNode() const;
 
    void setSubmittalTime(const long int submittalTime);
