@@ -9,6 +9,12 @@ IProtocol::IProtocol(const int id, const unsigned int parametersNumber)
    , m_parametersNumber(parametersNumber)
 {
    m_parameterList.resize(parametersNumber);
+
+   for(auto& parameter : m_parameterList)
+   {
+      // Initialize value
+      parameter = " ";
+   }
 }
 
 std::string IProtocol::serialize() const

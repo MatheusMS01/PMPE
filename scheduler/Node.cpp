@@ -23,7 +23,7 @@ namespace node
          MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
          TimestampProtocol ts;
-         ts.setTimestamp(time(NULL));
+         ts.setTimestamp(std::time(nullptr));
 
          messageQueue.write(ts.serialize(), g_type);
       }
@@ -46,12 +46,12 @@ Node::Node(const int id)
    buildNeighborhood();
 
    // Set action for SIGCHLD
-   struct sigaction sa;
+   struct sigaction sa_chld;
 
-   memset(&sa, 0, sizeof(sa));
-   sa.sa_handler = node::SIGCHLDHandler;
+   memset(&sa_chld, 0, sizeof(sa_chld));
+   sa_chld.sa_handler = node::SIGCHLDHandler;
 
-   sigaction(SIGCHLD, &sa, NULL);
+   sigaction(SIGCHLD, &sa_chld, NULL);
 }
 
 void Node::buildNeighborhood()
@@ -79,6 +79,8 @@ void Node::execute()
          continue;
       }
       
+      // std::cout << Utils::getProtocolId(message) << ": " << message << "\n";
+
       switch(Utils::getProtocolId(message))
       {
          case IProtocol::ExecuteProgramPostponed:
@@ -120,7 +122,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       m_ns.setNodeId(m_id);
       m_ns.setDelay(epp.getDelay());
       m_ns.setProgramName(epp.getProgramName());
-      m_ns.setBeginTime(time(NULL));
+      m_ns.setBeginTime(std::time(nullptr));
       m_ns.setSubmittalTime(epp.getSubmittalTime());
       m_ns.setPID(getpid());
       
@@ -173,8 +175,9 @@ void Node::treat(const TimestampProtocol& ts)
 
 void Node::route(const std::string& pdu, const int destinationNode)
 {
-   const auto neighborItr = find_if(m_neighborList.begin(), m_neighborList.end(), [&] (const Neighbor& neighbor) {
-      return neighbor.id == destinationNode;
+   const auto neighborItr = find_if(m_neighborList.begin(), m_neighborList.end(), [&] (const Neighbor& itr) 
+   {
+      return itr.id == destinationNode;
    });
 
    if(neighborItr != m_neighborList.end())

@@ -5,6 +5,7 @@
 #include "ExecuteProgramPostponedProtocol.h"
 #include "NotifySchedulerProtocol.h"
 #include "ShutdownProtocol.h"
+#include "AlarmProtocol.h"
 
 #include <map>
 #include <vector>
@@ -24,12 +25,14 @@ private:
    std::vector<pid_t> m_childPIDList;
    std::vector<NotifySchedulerProtocol> m_executionLogList;
    bool m_shutdown;
+   int m_sequentialNumber;
 
    bool createNodes();
 
    void treat(ExecuteProgramPostponedProtocol& eep);
    void treat(const NotifySchedulerProtocol& ns);
    void treat(const ShutdownProtocol& sd);
+   void treat(const AlarmProtocol& al);
 
    void executeProgramPostponed(const ExecuteProgramPostponedProtocol& eep);
    void printStatistics();

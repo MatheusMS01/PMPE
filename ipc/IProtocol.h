@@ -12,6 +12,7 @@ public:
       NotifyScheduler         = 1,
       Shutdown                = 2,
       Timestamp               = 3,
+      Alarm                   = 4,
    };
 
    using ParameterList = std::vector<std::string>;

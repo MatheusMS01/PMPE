@@ -12,6 +12,7 @@
 #include <ctime>
 #include <iomanip>
 #include <cstring>
+#include <climits>
 
 namespace scheduler
 {
@@ -21,8 +22,17 @@ namespace scheduler
 
       while(waitpid(-1, &status, WNOHANG) != -1)
       {
-         // Do nothing
+         // Do nothing; Just to make sure child processes will die
       }
+   }
+
+   void SIGALRMHandler(int signal)
+   {
+      MessageQueue messageQueue(MessageQueue::MainQueueKey);
+
+      AlarmProtocol al;
+
+      messageQueue.write(al.serialize(), MessageQueue::SchedulerId);
    }
 }
 
@@ -33,14 +43,23 @@ Scheduler::Scheduler()
    , m_childPIDList()
    , m_executionLogList()
    , m_shutdown(false)
+   , m_sequentialNumber(0)
 {
-      // Set action for SIGCHLD
-   struct sigaction sa;
+   // Set action for SIGCHLD
+   struct sigaction sa_chld;
 
-   memset(&sa, 0, sizeof(sa));
-   sa.sa_handler = scheduler::SIGCHLDHandler;
+   memset(&sa_chld, 0, sizeof(sa_chld));
+   sa_chld.sa_handler = scheduler::SIGCHLDHandler;
 
-   sigaction(SIGCHLD, &sa, NULL);
+   sigaction(SIGCHLD, &sa_chld, NULL);
+
+   // Set action for SIGALRM
+   struct sigaction sa_alrm;
+
+   memset(&sa_alrm, 0, sizeof(sa_alrm));
+   sa_alrm.sa_handler = scheduler::SIGALRMHandler;
+
+   sigaction(SIGALRM, &sa_alrm, NULL);
 }
 
 bool Scheduler::createNodes()
@@ -112,6 +131,13 @@ int Scheduler::execute()
          }
          break;
 
+         case IProtocol::Alarm:
+         {
+            AlarmProtocol al;
+            treat(al);
+         }
+         break;
+
          default:
          {
          }
@@ -120,9 +146,9 @@ int Scheduler::execute()
 
       if(m_shutdown)
       {
-         const auto busyNode = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& node)
+         const auto busyNode = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& itr)
          {
-            return node.second == Node::Busy;
+            return itr.second == Node::Busy;
          });
 
          const auto canShutdown = (busyNode == m_nodeMap.end());
@@ -153,27 +179,86 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 {
    if(m_shutdown)
    {
-      // m_pendingExecutionList.push_back(epp);
       return;
    }
 
-   epp.setSubmittalTime(time(NULL));
-   sleep(epp.getDelay());
+   unsigned int alarmTime;
 
-   for(const auto& node : m_nodeMap)
+   const auto currentTime = std::time(nullptr);
+
+   // Time when alarm is supposed to stop
+   const auto endTime = static_cast<unsigned int>(epp.getSubmittalTime() + epp.getDelay());
+
+   if(endTime <= currentTime)
    {
-      epp.setDestinationNode(node.first);
+      // Delay has already passed; no need to wait
+      alarmTime = 0;
+   }
+   else
+   {
+      // Wait remaining time
+      alarmTime = endTime - currentTime;
+   }
 
-      if(node.second == Node::Busy)
+   if(alarmTime == 0)
+   {
+      if(epp.getDestinationNode() == -1)
       {
-         m_pendingExecutionList.push_back(epp);
-         continue;
+         // User sent epp with delay = 0
+         for(const auto& node : m_nodeMap)
+         {
+            // All nodes should execute
+            epp.setDestinationNode(node.first);
+            if(node.second == Node::Busy)
+            {
+               // Node is busy. Push it to pending execution list
+               epp.setSequentialNumber(m_sequentialNumber++);
+               m_pendingExecutionList.push_back(epp);
+               continue; // for
+            }
+
+            executeProgramPostponed(epp);
+         }
+      }
+      else
+      {
+         // Alarm timed out
+         if(m_nodeMap[epp.getDestinationNode()] == Node::Busy)
+         {
+            // Node is still busy. Do nothing
+            return;
+         }
+
+         executeProgramPostponed(epp);
+      }
+   }
+   else
+   {
+      // User sent epp with delay > 0
+      const auto remaining = alarm(alarmTime);
+
+      if(remaining < static_cast<unsigned int>(epp.getDelay()) && remaining != 0)
+      {
+         // If previous delay will finish before new one, stick to what was remaining
+         alarm(remaining);
       }
 
-      executeProgramPostponed(epp);
+      if(epp.getSequentialNumber() != -1)
+      {
+         // This epp was already generated before
+         return;
+      }
+
+      // This is a new epp
+      for(const auto& node : m_nodeMap)
+      {
+         // All nodes should receive it
+         epp.setDestinationNode(node.first);
+         epp.setSequentialNumber(m_sequentialNumber++);
+         m_pendingExecutionList.push_back(epp);
+      }
    }
 }
-
 
 void Scheduler::treat(const NotifySchedulerProtocol& ns)
 {
@@ -185,7 +270,9 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 
    std::string message;
    message.append("job=" + std::to_string(ns.getNodeId()) + ", ");
+
    message.append("arquivo=" + ns.getProgramName() + ", ");
+
    message.append("delay=" + std::to_string(ns.getDelay()) +
                   " segundo" + (ns.getDelay() > 1 ? "s" : "") +  ", ");
 
@@ -194,14 +281,15 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 
    std::cout << message << "\n";
 
-   for(size_t it = 0; it < m_pendingExecutionList.size(); ++it)
+   const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), [&] (const ExecuteProgramPostponedProtocol& itr)
    {
-      if(m_pendingExecutionList.at(it).getDestinationNode() == ns.getNodeId())
-      {
-         executeProgramPostponed(m_pendingExecutionList.at(it));
-         m_pendingExecutionList.erase(m_pendingExecutionList.begin() + it);
-         break;
-      }
+      return itr.getDestinationNode() == ns.getNodeId();
+   });
+
+   if(eppItr != m_pendingExecutionList.end())
+   {
+      // Found a pending execution for this node
+      m_messageQueue.write(eppItr->serialize(), MessageQueue::SchedulerId);
    }
 }
 
@@ -209,6 +297,15 @@ void Scheduler::treat(const ShutdownProtocol& sd)
 {
    m_shutdown = true;
 
+}
+
+void Scheduler::treat(const AlarmProtocol& al)
+{
+   // Resend all pending executions
+   for(const auto& pendingExecution : m_pendingExecutionList)
+   {
+      m_messageQueue.write(pendingExecution.serialize(), MessageQueue::SchedulerId);
+   }
 }
 
 void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& epp)
@@ -219,8 +316,20 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
    }
 
    // Write to node zero
-   if(m_messageQueue.write(epp.serialize(), MessageQueue::SchedulerId + 1))
+   if(m_messageQueue.write(epp.serialize(), MessageQueue::NodeZeroId))
    {
+      // Remove from pending execution list(if there is) and set node state to busy
+      const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), 
+         [&] (const ExecuteProgramPostponedProtocol& itr)
+         {
+            return itr.getSequentialNumber() == epp.getSequentialNumber();
+         });
+
+      if(eppItr != m_pendingExecutionList.end())
+      {
+         m_pendingExecutionList.erase(eppItr);
+      }
+
       m_nodeMap[epp.getDestinationNode()] = Node::Busy;
    }
 }

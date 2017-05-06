@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <ctime>
 
 int main(int argc, char* argv[])
 {
@@ -18,6 +19,7 @@ int main(int argc, char* argv[])
    ExecuteProgramPostponedProtocol epp;
    epp.setDelay(std::stoi(argv[1]));
    epp.setProgramName(argv[2]);
+   epp.setSubmittalTime(std::time(nullptr));
 
    if(!messageQueue.write(epp.serialize(), MessageQueue::SchedulerId))
    {

@@ -40,6 +40,7 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
       // Mandatory
       default:
       {
+         m_parameterList.at(SequentialNumber) = parameterList.at(SequentialNumber);
          m_parameterList.at(Delay) = parameterList.at(Delay);
          m_parameterList.at(ProgramName) = parameterList.at(ProgramName);
       }
@@ -108,4 +109,22 @@ long int ExecuteProgramPostponedProtocol::getSubmittalTime() const
    {
       return -1;
    }
+}
+
+void ExecuteProgramPostponedProtocol::setSequentialNumber(const int sequentialNumber)
+{
+   m_parameterList.at(SequentialNumber) = std::to_string(sequentialNumber);
+}
+
+int ExecuteProgramPostponedProtocol::getSequentialNumber() const
+{
+   try
+   {
+      return std::stol(m_parameterList.at(SequentialNumber));
+   }
+   catch(...)
+   {
+      return -1;
+   }
+
 }

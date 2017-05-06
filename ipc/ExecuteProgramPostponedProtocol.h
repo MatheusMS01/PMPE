@@ -7,10 +7,11 @@ class ExecuteProgramPostponedProtocol : public IProtocol
 public:
    enum ParameterId : unsigned int
    {
-      Delay            = 0,
-      ProgramName      = 1,
-      DestinationNode  = 2,
-      SubmittalTime    = 3,
+      SequentialNumber = 0,
+      Delay            = 1,
+      ProgramName      = 2,
+      DestinationNode  = 3,
+      SubmittalTime    = 4,
       ParametersNumber = SubmittalTime + 1, 
    };
 
@@ -29,4 +30,7 @@ public:
 
    void setSubmittalTime(const long int submittalTime);
    long int getSubmittalTime() const;
+
+   void setSequentialNumber(const int sequentialNumber);
+   int getSequentialNumber() const;
 };

@@ -19,7 +19,8 @@ public:
 
    enum ProcessType : unsigned int
    {
-      SchedulerId = 1
+      SchedulerId = 1,
+      NodeZeroId  = SchedulerId + 1,
    };
 
    bool write(const std::string& message, const unsigned int type);
