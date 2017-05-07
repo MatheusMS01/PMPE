@@ -32,7 +32,10 @@ namespace scheduler
 
       AlarmProtocol al;
 
-      messageQueue.write(al.serialize(), MessageQueue::SchedulerId);
+      if(!messageQueue.write(al.serialize(), MessageQueue::SchedulerId))
+      {
+         std::cout << __LINE__ << ": Failed\n";
+      }
    }
 }
 
@@ -301,10 +304,20 @@ void Scheduler::treat(const ShutdownProtocol& sd)
 
 void Scheduler::treat(const AlarmProtocol& al)
 {
+   unsigned int messagesSent = 0;
    // Resend all pending executions
    for(const auto& pendingExecution : m_pendingExecutionList)
    {
-      m_messageQueue.write(pendingExecution.serialize(), MessageQueue::SchedulerId);
+      if(messagesSent++ == 64)
+      {
+         // MessageQueue has a limit of 64 messages
+         return;
+      }
+
+      if(!m_messageQueue.write(pendingExecution.serialize(), MessageQueue::SchedulerId))
+      {
+         std::cout << __LINE__ << ": Failed\n";
+      }
    }
 }
 
