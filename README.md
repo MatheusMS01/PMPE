@@ -11,6 +11,6 @@ Postponed Multi-Process Execution
   - Primeiro terminal direcionado em `/scheduler`
     - Execute o comando `./escalonador`. Será executado o programa escalonador responsável por gerenciar todo o processo de execução dos gerentes
   - Segundo terminal direcionado em `/execute_postponed`
-    - Execute o comando `./executa_postergado` delay program_name, onde delay é um inteiro positivo, relativo ao tempo que o escalonador deve esperar antes de pedir aos gerentes que executem o programa(program_name), para inicializar a execução do programa pelos gerentes.
+    - Execute o comando `./executa_postergado delay program_name`, onde delay é um inteiro positivo, relativo ao tempo que o escalonador deve esperar antes de pedir aos gerentes que executem o programa(program_name), para inicializar a execução do programa pelos gerentes.
   - Terceiro terminal direcionado em `/shutdown`
     - Execute o comando ./shutdown para finalizar a execução do projeto
