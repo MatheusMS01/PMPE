@@ -10,32 +10,17 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <ctime>
-#include <iomanip>
 #include <cstring>
-#include <climits>
 
 namespace scheduler
 {
-   void SIGCHLDHandler(int signal)
-   {
-      int status;
-
-      while(waitpid(-1, &status, WNOHANG) != -1)
-      {
-         // Do nothing; Just to make sure child processes will die
-      }
-   }
-
    void SIGALRMHandler(int signal)
    {
       MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
       AlarmProtocol al;
 
-      if(!messageQueue.write(al.serialize(), MessageQueue::SchedulerId))
-      {
-         std::cout << __LINE__ << ": Failed\n";
-      }
+      messageQueue.write(al.serialize(), MessageQueue::SchedulerId);
    }
 }
 
@@ -48,14 +33,6 @@ Scheduler::Scheduler()
    , m_shutdown(false)
    , m_sequentialNumber(0)
 {
-   // Set action for SIGCHLD
-   struct sigaction sa_chld;
-
-   memset(&sa_chld, 0, sizeof(sa_chld));
-   sa_chld.sa_handler = scheduler::SIGCHLDHandler;
-
-   sigaction(SIGCHLD, &sa_chld, NULL);
-
    // Set action for SIGALRM
    struct sigaction sa_alrm;
 
@@ -149,19 +126,24 @@ int Scheduler::execute()
 
       if(m_shutdown)
       {
-         const auto busyNode = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& itr)
+         const auto nodeItr = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& itr)
          {
             return itr.second == Node::Busy;
          });
 
-         const auto canShutdown = (busyNode == m_nodeMap.end());
+         const auto canShutdown = (nodeItr == m_nodeMap.end());
 
          if(canShutdown)
          {
-            // Kill all children processes
+            // Children reap
             for(const auto childPID : m_childPIDList)
             {
+               // Send signal
                kill(childPID, SIGTERM);
+
+               // Wait for child signal
+               int status;
+               wait(&status);
             }
 
             // @TODO: Show programs that were not executed
@@ -240,7 +222,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
       // User sent epp with delay > 0
       const auto remaining = alarm(alarmTime);
 
-      if(remaining < static_cast<unsigned int>(epp.getDelay()) && remaining != 0)
+      if(remaining < static_cast<unsigned int>(alarmTime) && remaining != 0)
       {
          // If previous delay will finish before new one, stick to what was remaining
          alarm(remaining);
@@ -314,10 +296,7 @@ void Scheduler::treat(const AlarmProtocol& al)
          return;
       }
 
-      if(!m_messageQueue.write(pendingExecution.serialize(), MessageQueue::SchedulerId))
-      {
-         std::cout << __LINE__ << ": Failed\n";
-      }
+      m_messageQueue.write(pendingExecution.serialize(), MessageQueue::SchedulerId);
    }
 }
 
