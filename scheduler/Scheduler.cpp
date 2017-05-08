@@ -266,10 +266,11 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 
    std::cout << message << "\n";
 
-   const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), [&] (const ExecuteProgramPostponedProtocol& itr)
-   {
-      return itr.getDestinationNode() == ns.getNodeId();
-   });
+   const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), 
+      [&] (const ExecuteProgramPostponedProtocol& itr)
+      {
+         return itr.getDestinationNode() == ns.getNodeId();
+      });
 
    if(eppItr != m_pendingExecutionList.end())
    {
@@ -281,18 +282,20 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 void Scheduler::treat(const ShutdownProtocol& sd)
 {
    m_shutdown = true;
-
 }
 
 void Scheduler::treat(const AlarmProtocol& al)
 {
-   unsigned int messagesSent = 0;
-   // Resend all pending executions
+   resendPendingExecution();
+}
+
+void Scheduler::resendPendingExecution()
+{
    for(const auto& pendingExecution : m_pendingExecutionList)
    {
-      if(messagesSent++ == 64)
+      if(m_messageQueue.getBytes() + pendingExecution.serialize().length() >= m_messageQueue.getLenght())
       {
-         // MessageQueue has a limit of 64 messages
+         // Not to flood message queue
          return;
       }
 

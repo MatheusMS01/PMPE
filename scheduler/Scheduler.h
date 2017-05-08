@@ -34,6 +34,7 @@ private:
    void treat(const ShutdownProtocol& sd);
    void treat(const AlarmProtocol& al);
 
+   void resendPendingExecution();
    void executeProgramPostponed(const ExecuteProgramPostponedProtocol& eep);
    void printStatistics();
 };

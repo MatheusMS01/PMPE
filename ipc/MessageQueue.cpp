@@ -61,3 +61,31 @@ bool MessageQueue::remove()
 {
    return msgctl(m_id, IPC_RMID, NULL) == -1;
 }
+
+msglen_t MessageQueue::getLenght()
+{
+   msglen_t lenght = 0xFFFFFFFF;
+   struct msqid_ds *buffer = new struct msqid_ds();
+
+   if(msgctl(m_id, IPC_STAT, buffer) != -1)
+   {
+      lenght = buffer->msg_qbytes;
+   }
+
+   delete buffer;
+   return lenght;
+}
+
+unsigned long MessageQueue::getBytes()
+{
+   unsigned long bytes = 0xFFFFFFFFFFFFFFFF;
+   struct msqid_ds *buffer = new struct msqid_ds();
+
+   if(msgctl(m_id, IPC_STAT, buffer) != -1)
+   {
+      bytes = buffer->__msg_cbytes;
+   }
+
+   delete buffer;
+   return bytes;
+}
