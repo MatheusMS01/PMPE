@@ -27,9 +27,6 @@ public:
    bool read(std::string& message, const unsigned int type);
    bool remove();
 
-   msglen_t getLenght(); /* Maximum number of bytes allowed in queue */
-   unsigned long getBytes(); /* Current number of bytes in queue (nonstandard) */
-
 private:
    struct Buffer
    {

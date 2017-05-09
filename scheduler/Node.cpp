@@ -38,6 +38,7 @@ Node::Node(const int id)
    , m_messageQueue(MessageQueue::MainQueueKey)
    , m_waitingTimestamp(false)
    , m_ns()
+   , m_log(std::to_string(id))
 {
    g_type = m_processType;
 
@@ -79,8 +80,6 @@ void Node::execute()
       {
          continue;
       }
-      
-      // std::cout << Utils::getProtocolId(message) << ": " << message << "\n";
 
       switch(Utils::getProtocolId(message))
       {
@@ -120,6 +119,8 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 {
    if(epp.getDestinationNode() == m_id)
    {
+      m_log.write("Received execution: " + epp.serialize());
+
       m_ns.setNodeId(m_id);
       m_ns.setDelay(epp.getDelay());
       m_ns.setProgramName(epp.getProgramName());
@@ -156,6 +157,7 @@ void Node::treat(const NotifySchedulerProtocol& ns)
 {
    if(m_id == 0)
    {
+      m_log.write("Sending notification to scheduler: " + ns.serialize());
       m_messageQueue.write(ns.serialize(), MessageQueue::SchedulerId);
    }
    else
@@ -166,6 +168,8 @@ void Node::treat(const NotifySchedulerProtocol& ns)
 
 void Node::treat(const TimestampProtocol& ts)
 {
+   m_log.write("Child has terminated execution");
+
    if(m_waitingTimestamp)
    {
       m_waitingTimestamp = false;
@@ -176,13 +180,16 @@ void Node::treat(const TimestampProtocol& ts)
 
 void Node::route(const std::string& pdu, const int destinationNode)
 {
-   const auto neighborItr = find_if(m_neighborList.begin(), m_neighborList.end(), [&] (const Neighbor& itr) 
-   {
-      return itr.id == destinationNode;
-   });
+   const auto neighborItr = find_if(m_neighborList.begin(), m_neighborList.end(), 
+      [&] (const Neighbor& itr) 
+      {
+         return itr.id == destinationNode;
+      });
 
    if(neighborItr != m_neighborList.end())
    {
+      m_log.write("Routing to neighbor " + std::to_string(neighborItr->id) + " " + pdu);
+
       m_messageQueue.write(pdu, neighborItr->processType);
       return;
    }
@@ -201,6 +208,8 @@ void Node::route(const std::string& pdu, const int destinationNode)
          bestNeighbor.second = distance;
       }
    }
+
+   m_log.write("Routing to best neighbor " + std::to_string(bestNeighbor.first.id) + ": " + pdu);
 
    m_messageQueue.write(pdu, bestNeighbor.first.processType);
 }

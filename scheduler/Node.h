@@ -5,6 +5,7 @@
 #include "NotifySchedulerProtocol.h"
 #include "TimestampProtocol.h"
 #include <vector>
+#include "Log.h"
 
 class Node
 {
@@ -42,6 +43,7 @@ private:
    std::vector<Neighbor> m_neighborList;
    bool m_waitingTimestamp;
    NotifySchedulerProtocol m_ns;
+   Log m_log;
 
    void buildNeighborhood();
    void treat(const ExecuteProgramPostponedProtocol& epp);

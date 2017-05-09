@@ -7,6 +7,8 @@
 #include "ShutdownProtocol.h"
 #include "AlarmProtocol.h"
 
+#include "Log.h"
+
 #include <map>
 #include <vector>
 
@@ -26,6 +28,7 @@ private:
    std::vector<NotifySchedulerProtocol> m_executionLogList;
    bool m_shutdown;
    int m_sequentialNumber;
+   Log m_log;
 
    bool createNodes();
 
@@ -34,7 +37,6 @@ private:
    void treat(const ShutdownProtocol& sd);
    void treat(const AlarmProtocol& al);
 
-   void resendPendingExecution();
    void executeProgramPostponed(const ExecuteProgramPostponedProtocol& eep);
    void printStatistics();
 };
