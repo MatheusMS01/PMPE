@@ -35,7 +35,7 @@ private:
    struct Buffer
    {
       long type;
-      char data[256];
+      char data[128];
    };
 
    key_t m_key;

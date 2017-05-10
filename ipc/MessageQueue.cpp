@@ -23,7 +23,7 @@ bool MessageQueue::write(const std::string& message, const unsigned int type)
       Buffer *buffer = new Buffer();
 
       buffer->type = type;
-      sprintf(buffer->data, "%.255s", message.c_str());
+      sprintf(buffer->data, "%.127s", message.c_str());
       const auto result = msgsnd(m_id, buffer, sizeof(buffer->data), 0) != -1;
 
       delete buffer;

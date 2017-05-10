@@ -140,7 +140,8 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       if(pid == 0)
       {
          // @TODO: Run Program
-         sleep(1);
+         srand (time(NULL) * m_id);
+         sleep(rand() % 10 + 1);
 
          _exit(0);
       }

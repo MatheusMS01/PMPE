@@ -59,7 +59,7 @@ Scheduler::Scheduler()
 bool Scheduler::createNodes()
 {
    pid_t pid;
-   for(int nodeId = 0; nodeId < 16; ++nodeId)
+   for(unsigned int nodeId = 0; nodeId < 16; ++nodeId)
    {
       pid = fork();
 
@@ -96,6 +96,7 @@ int Scheduler::execute()
 
    while(true)
    {
+      m_log.write("Reading from message queue");
       std::string message;
       if(!m_messageQueue.read(message, MessageQueue::SchedulerId))
       {
@@ -178,7 +179,14 @@ int Scheduler::execute()
          }
          else
          {
-            m_log.write("Can't shutdown! Node " + std::to_string(nodeItr->first) + " is still busy");
+            m_log.write("Can't shutdown!");
+            for(const auto node : m_nodeMap)
+            {
+               if(node.second == Node::Busy)
+               {
+                  m_log.write("Node " + std::to_string(node.first) + " is still busy");   
+               }
+            }
          }
       }
    }
@@ -344,6 +352,7 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
 {
    if(m_shutdown)
    {
+      m_log.write("Won't execute because system is shutting down!");
       return;
    }
 
@@ -363,6 +372,7 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
          m_pendingExecutionList.erase(eppItr);
       }
 
+      m_log.write("Node " + std::to_string(m_nodeMap[epp.getDestinationNode()]) + " is now busy");
       m_nodeMap[epp.getDestinationNode()] = Node::Busy;
    }
 }
