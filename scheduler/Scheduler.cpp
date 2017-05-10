@@ -252,15 +252,14 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
    else
    {
       // User sent epp with delay > 0
-
-      m_log.write("Setting alarm to " + std::to_string(alarmTime) + " seconds");
+      m_log.write("Setting alarm to " + std::to_string(alarmTime) + " second" + (alarmTime > 1 ? "s" : ""));
 
       const auto remaining = alarm(alarmTime);
 
       if(remaining < static_cast<unsigned int>(alarmTime) && remaining != 0)
       {
          // If previous delay will finish before new one, stick to what was remaining
-         m_log.write("Reseting to faster time out " + std::to_string(remaining) + " seconds");
+         m_log.write("Reseting to faster time out " + std::to_string(remaining) + " second" + (remaining > 1 ? "s" : ""));
          alarm(remaining);
       }
 
@@ -319,7 +318,7 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 
 void Scheduler::treat(const ShutdownProtocol& sd)
 {
-   m_log.write("Received a shutdown message!");
+   m_log.write("Received a shutdown");
    m_shutdown = true;
 }
 
@@ -332,6 +331,11 @@ void Scheduler::treat(const AlarmProtocol& al)
    // Treat every pending execution
    for(auto pendingExecution : pendingExecutionList)
    {
+      if(m_messageQueue.getBufferSize() + m_messageQueue.getCurrentBytes() >= m_messageQueue.getLenght())
+      {
+         return;
+      }
+
       treat(pendingExecution);
    }
 }
@@ -366,7 +370,7 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
 void Scheduler::printStatistics()
 {
    std::string statistics;
-   statistics.append("\n\n-----------------------------Statistics-------------------------\n");
+   statistics.append("\n-----------------------------Statistics-------------------------\n");
    statistics.append("PID\tProgram Name\tSubmittal Time\tBegin Time\tEnd Time\n");
    statistics.append("----------------------------------------------------------------\n");
    for(const auto& executionLog : m_executionLogList)

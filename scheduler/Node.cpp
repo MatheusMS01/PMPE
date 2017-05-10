@@ -188,7 +188,7 @@ void Node::route(const std::string& pdu, const int destinationNode)
 
    if(neighborItr != m_neighborList.end())
    {
-      m_log.write("Routing to neighbor " + std::to_string(neighborItr->id) + " " + pdu);
+      m_log.write("Routing to neighbor " + std::to_string(neighborItr->id) + ": " + pdu);
 
       m_messageQueue.write(pdu, neighborItr->processType);
       return;

@@ -9,7 +9,7 @@
 class MessageQueue
 {
 public:
-   explicit MessageQueue(key_t key);
+   explicit MessageQueue(const key_t key);
    ~MessageQueue() = default;
 
    enum QueueKey : key_t
@@ -26,6 +26,10 @@ public:
    bool write(const std::string& message, const unsigned int type);
    bool read(std::string& message, const unsigned int type);
    bool remove();
+
+   msglen_t getLenght();
+   unsigned long getCurrentBytes();
+   unsigned int getBufferSize();
 
 private:
    struct Buffer

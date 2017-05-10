@@ -1,6 +1,6 @@
 #include "MessageQueue.h"
 
-MessageQueue::MessageQueue(key_t key)
+MessageQueue::MessageQueue(const key_t key)
    : m_key(key)
 {
    // Open Message Queue
@@ -8,7 +8,9 @@ MessageQueue::MessageQueue(key_t key)
 }
 
 /**
-   Writes string in MessageQueue, for a specific type
+   Writes string in MessageQueue, for a specific type.
+   If Queue is full, caller is blocked untill enough 
+   space is freed
 
    @param message to be written,
           type to be written
@@ -16,7 +18,7 @@ MessageQueue::MessageQueue(key_t key)
 */
 bool MessageQueue::write(const std::string& message, const unsigned int type)
 {
-   if(m_id > -1)
+   if(m_id > 1)
    {
       Buffer *buffer = new Buffer();
 
@@ -60,4 +62,45 @@ bool MessageQueue::read(std::string& message, const unsigned int type)
 bool MessageQueue::remove()
 {
    return msgctl(m_id, IPC_RMID, NULL) == -1;
+}
+
+/**
+   @return Maximum number of bytes allowed in queue
+*/
+
+msglen_t MessageQueue::getLenght()
+{
+   msglen_t lenght = 0xFFFFFFFF;
+   struct msqid_ds *buffer = new struct msqid_ds();
+
+   if(msgctl(m_id, IPC_STAT, buffer) != 1)
+   {
+      lenght = buffer->msg_qbytes;
+   }
+
+   delete buffer;
+   return lenght;
+}
+
+/**
+   @return Current number of bytes in queue (nonstandard)   
+*/
+unsigned long MessageQueue::getCurrentBytes()
+{
+   unsigned long bytes = 0xFFFFFFFFFFFFFFFF;
+   struct msqid_ds *buffer = new struct msqid_ds();
+
+   if(msgctl(m_id, IPC_STAT, buffer) != 1)
+   {
+      bytes = buffer->__msg_cbytes;
+   }
+
+   delete buffer;
+   return bytes;
+}
+
+unsigned int MessageQueue::getBufferSize()
+{
+   Buffer buffer;
+   return sizeof(buffer.data);
 }
