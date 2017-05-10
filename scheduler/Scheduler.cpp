@@ -267,7 +267,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
       if(remaining < static_cast<unsigned int>(alarmTime) && remaining != 0)
       {
          // If previous delay will finish before new one, stick to what was remaining
-         m_log.write("Reseting to faster time out " + std::to_string(remaining) + " second" + (remaining > 1 ? "s" : ""));
+         m_log.write("Resetting to faster time out " + std::to_string(remaining) + " second" + (remaining > 1 ? "s" : ""));
          alarm(remaining);
       }
 
@@ -356,10 +356,13 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
       return;
    }
 
+   m_log.write("Sending execution: " + epp.serialize());
    // Write to node zero
    if(m_messageQueue.write(epp.serialize(), MessageQueue::NodeZeroId))
    {
-      m_log.write("Sending execution: " + epp.serialize());
+      m_log.write("Node " + std::to_string(epp.getDestinationNode()) + " is now busy");
+      m_nodeMap[epp.getDestinationNode()] = Node::Busy;
+
       // Remove from pending execution list(if there is) and set node state to busy
       const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), 
          [&] (const ExecuteProgramPostponedProtocol& itr)
@@ -371,9 +374,10 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
       {
          m_pendingExecutionList.erase(eppItr);
       }
-
-      m_log.write("Node " + std::to_string(m_nodeMap[epp.getDestinationNode()]) + " is now busy");
-      m_nodeMap[epp.getDestinationNode()] = Node::Busy;
+   }
+   else
+   {
+      m_log.write("Failed to send execute!");
    }
 }
 

@@ -58,16 +58,19 @@ Node::Node(const int id)
 
 void Node::buildNeighborhood()
 {
+   m_log.write("Building neighborhood:");
    for(int adjacencyX = -1; adjacencyX <= 1; adjacencyX += 2)
    {
       Neighbor neighbor((m_x + adjacencyX) % 4, m_y);
       m_neighborList.push_back(neighbor);
+      m_log.write(std::to_string(neighbor.x) + "," + std::to_string(neighbor.y));
    }
 
    for(int adjacencyY = -1; adjacencyY <= 1; adjacencyY += 2)
    {
       Neighbor neighbor(m_x, (m_y + adjacencyY) % 4);
       m_neighborList.push_back(neighbor);
+      m_log.write(std::to_string(neighbor.x) + "," + std::to_string(neighbor.y));
    }
 }
 
@@ -75,6 +78,7 @@ void Node::execute()
 {
    while(true)
    {
+      m_log.write("Reading from message queue");
       std::string message;
       if(!m_messageQueue.read(message, m_processType))
       {

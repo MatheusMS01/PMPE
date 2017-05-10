@@ -92,7 +92,7 @@ unsigned long MessageQueue::getCurrentBytes()
 
    if(msgctl(m_id, IPC_STAT, buffer) != 1)
    {
-      bytes = buffer->__msg_cbytes;
+      bytes = buffer->msg_cbytes;
    }
 
    delete buffer;
