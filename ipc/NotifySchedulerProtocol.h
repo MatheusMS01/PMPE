@@ -40,4 +40,6 @@ public:
 
    pid_t getPID() const;
    void setPID(const pid_t pid);
+
+   std::string fancy() const;
 };

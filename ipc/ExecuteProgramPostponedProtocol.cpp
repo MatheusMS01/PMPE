@@ -128,3 +128,17 @@ int ExecuteProgramPostponedProtocol::getSequentialNumber() const
    }
 
 }
+
+std::string ExecuteProgramPostponedProtocol::fancy() const
+{
+   std::string message;
+
+   message.append("ExecuteProgramPostponed\n");
+   message.append("\tDelay: " + m_parameterList.at(Delay) + "\n");
+   message.append("\tProgramName: " + m_parameterList.at(ProgramName) + "\n");
+   message.append("\tSubmittalTime: " + m_parameterList.at(SubmittalTime) + "\n");
+   message.append("\tSequentialNumber: " + m_parameterList.at(SequentialNumber) + "\n");
+   message.append("\tDestinationNode: " + m_parameterList.at(DestinationNode));
+
+   return message;
+}

@@ -21,3 +21,13 @@ long int TimestampProtocol::getTimestamp() const
       return -1;
    }
 }
+
+std::string TimestampProtocol::fancy() const
+{
+   std::string message;
+
+   message.append("Timestamp\n");
+   message.append("\tTimestamp: " + m_parameterList.at(Timestamp));
+
+   return message;
+}

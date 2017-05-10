@@ -17,7 +17,7 @@ public:
       MainQueueKey = 120053161
    };
 
-   enum ProcessType : unsigned int
+   enum ProcessType : long
    {
       SchedulerId = 1,
       NodeZeroId  = SchedulerId + 1,

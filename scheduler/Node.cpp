@@ -85,12 +85,15 @@ void Node::execute()
          continue;
       }
 
+      m_log.write("Message received: ");
+
       switch(Utils::getProtocolId(message))
       {
          case IProtocol::ExecuteProgramPostponed:
          {
             ExecuteProgramPostponedProtocol epp;
             epp.parse(message);
+            m_log.write(epp.fancy());
             treat(epp);
          }
          break;
@@ -99,6 +102,7 @@ void Node::execute()
          {
             NotifySchedulerProtocol ns;
             ns.parse(message);
+            m_log.write(ns.fancy());
             treat(ns);
          }
          break;
@@ -107,12 +111,14 @@ void Node::execute()
          {
             TimestampProtocol ts;
             ts.parse(message);
+            m_log.write(ts.fancy());
             treat(ts);
          }
          break;
 
          default:
          {
+            m_log.write("Message unknown: " + message);
          }
          break;
       }
@@ -123,7 +129,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 {
    if(epp.getDestinationNode() == m_id)
    {
-      m_log.write("Received execution: " + epp.serialize());
+      m_log.write("Received execution: " + epp.fancy());
 
       m_ns.setNodeId(m_id);
       m_ns.setDelay(epp.getDelay());
@@ -144,8 +150,9 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       if(pid == 0)
       {
          // @TODO: Run Program
-         srand (time(NULL) * m_id);
-         sleep(rand() % 10 + 1);
+         // srand (time(NULL) * m_id);
+         // sleep(rand() % 10 + 1);
+         sleep(10);
 
          _exit(0);
       }
@@ -162,7 +169,7 @@ void Node::treat(const NotifySchedulerProtocol& ns)
 {
    if(m_id == 0)
    {
-      m_log.write("Sending notification to scheduler: " + ns.serialize());
+      m_log.write("Sending notification to scheduler: " + ns.fancy());
       m_messageQueue.write(ns.serialize(), MessageQueue::SchedulerId);
    }
    else

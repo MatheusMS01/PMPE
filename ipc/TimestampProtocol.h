@@ -15,4 +15,6 @@ public:
 
    long int getTimestamp() const;
    void setTimestamp(const long int timestamp);
+
+   std::string fancy() const;
 };

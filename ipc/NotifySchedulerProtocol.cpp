@@ -116,3 +116,19 @@ pid_t NotifySchedulerProtocol::getPID() const
       return -1;
    }
 }
+
+std::string NotifySchedulerProtocol::fancy() const
+{
+   std::string message;
+
+   message.append("NotifyScheduler\n");
+   message.append("\tNodeId: " + m_parameterList.at(NodeId) + "\n");
+   message.append("\tSubmittalTime: " + m_parameterList.at(SubmittalTime) + "\n");
+   message.append("\tBeginTime: " + m_parameterList.at(BeginTime) + "\n");
+   message.append("\tEndTime: " + m_parameterList.at(EndTime) + "\n");
+   message.append("\tDelay: " + m_parameterList.at(Delay) + "\n");
+   message.append("\tProgramName: " + m_parameterList.at(ProgramName) + "\n");
+   message.append("\tPID: " + m_parameterList.at(PID));
+
+   return message;
+}

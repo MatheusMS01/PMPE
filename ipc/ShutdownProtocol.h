@@ -11,4 +11,6 @@ public:
    };
 
    ShutdownProtocol();
+
+   std::string fancy() const;
 };

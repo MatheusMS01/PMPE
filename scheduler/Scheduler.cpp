@@ -103,7 +103,7 @@ int Scheduler::execute()
          continue;
       }
 
-      m_log.write("Received message: " + message);
+      m_log.write("Message received: ");
       
       switch(Utils::getProtocolId(message))
       {
@@ -111,6 +111,7 @@ int Scheduler::execute()
          {
             ExecuteProgramPostponedProtocol epp;
             epp.parse(message);
+            m_log.write(epp.fancy());
             treat(epp);
          }
          break;
@@ -119,6 +120,7 @@ int Scheduler::execute()
          {
             NotifySchedulerProtocol ns;
             ns.parse(message);
+            m_log.write(ns.fancy());
             treat(ns);
          }
          break;
@@ -126,6 +128,7 @@ int Scheduler::execute()
          case IProtocol::Shutdown:
          {
             ShutdownProtocol sd;
+            m_log.write(sd.fancy());
             treat(sd);
          }
          break;
@@ -133,22 +136,25 @@ int Scheduler::execute()
          case IProtocol::Alarm:
          {
             AlarmProtocol al;
+            m_log.write(al.fancy());
             treat(al);
          }
          break;
 
          default:
          {
+            m_log.write("Message unknown: " + message);
          }
          break;
       }
 
       if(m_shutdown)
       {
-         const auto nodeItr = find_if(m_nodeMap.begin(), m_nodeMap.end(), [] (const std::pair<int, int>& itr)
-         {
-            return itr.second == Node::Busy;
-         });
+         const auto nodeItr = find_if(m_nodeMap.begin(), m_nodeMap.end(),
+            [] (const std::pair<int, int>& itr)
+            {
+               return itr.second == Node::Busy;
+            });
 
          const auto canShutdown = (nodeItr == m_nodeMap.end());
 
@@ -158,7 +164,7 @@ int Scheduler::execute()
             // Children reaping
             for(const auto childPID : m_childPIDList)
             {
-               m_log.write("Reaping child " + std::to_string(childPID));
+               m_log.write("\tReaping child " + std::to_string(childPID));
 
                // Send signal
                kill(childPID, SIGTERM);
@@ -184,7 +190,7 @@ int Scheduler::execute()
             {
                if(node.second == Node::Busy)
                {
-                  m_log.write("Node " + std::to_string(node.first) + " is still busy");   
+                  m_log.write("\tNode " + std::to_string(node.first) + " is still busy");   
                }
             }
          }
@@ -224,8 +230,6 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
       if(epp.getDestinationNode() == -1)
       {
          // User sent epp with delay = 0
-         m_log.write("User sent epp with delay = 0");
-
          for(const auto& node : m_nodeMap)
          {
             // All nodes should execute
@@ -326,13 +330,11 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
 
 void Scheduler::treat(const ShutdownProtocol& sd)
 {
-   m_log.write("Received a shutdown");
    m_shutdown = true;
 }
 
 void Scheduler::treat(const AlarmProtocol& al)
 {
-   m_log.write("Alarm timed out");
    // This copy is needed because treat() will remove from m_pendingExecutionList
    const auto pendingExecutionList = m_pendingExecutionList;
 
@@ -356,7 +358,7 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
       return;
    }
 
-   m_log.write("Sending execution: " + epp.serialize());
+   m_log.write("Sending execution: " + epp.fancy());
    // Write to node zero
    if(m_messageQueue.write(epp.serialize(), MessageQueue::NodeZeroId))
    {
