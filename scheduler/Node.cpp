@@ -11,6 +11,8 @@
 #include <ctime>
 #include <algorithm>
 
+#include <errno.h>
+
 int g_type;
 
 namespace node
@@ -149,12 +151,10 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 
       if(pid == 0)
       {
-         // @TODO: Run Program
-         srand (time(NULL) * m_id);
-         sleep(rand() % 3 + 1);
-         // sleep(1);
+         const auto path = "./" + epp.getProgramName();
+         const auto arg = std::to_string(m_id);
 
-         _exit(0);
+         _exit(execl(path.c_str(), arg.c_str(), NULL));
       }
 
       m_waitingTimestamp = true;
