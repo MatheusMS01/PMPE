@@ -22,16 +22,16 @@ int NotifySchedulerProtocol::getNodeId() const
    }
 }
 
-void NotifySchedulerProtocol::setSubmittalTime(const long int submittalTime)
+void NotifySchedulerProtocol::setSubmissionTime(const long int submissionTime)
 {
-   m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
+   m_parameterList.at(SubmissionTime) = std::to_string(submissionTime);
 }
 
-long int NotifySchedulerProtocol::getSubmittalTime() const
+long int NotifySchedulerProtocol::getSubmissionTime() const
 {
    try
    {
-      return std::stol(m_parameterList.at(SubmittalTime));
+      return std::stol(m_parameterList.at(SubmissionTime));
    }
    catch(...)
    {
@@ -123,7 +123,7 @@ std::string NotifySchedulerProtocol::fancy() const
 
    message.append("NotifyScheduler\n");
    message.append("\tNodeId: " + m_parameterList.at(NodeId) + "\n");
-   message.append("\tSubmittalTime: " + m_parameterList.at(SubmittalTime) + "\n");
+   message.append("\tSubmissionTime: " + m_parameterList.at(SubmissionTime) + "\n");
    message.append("\tBeginTime: " + m_parameterList.at(BeginTime) + "\n");
    message.append("\tEndTime: " + m_parameterList.at(EndTime) + "\n");
    message.append("\tDelay: " + m_parameterList.at(Delay) + "\n");

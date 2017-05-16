@@ -11,7 +11,7 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
 {
    auto parameterList = Utils::getPduContent(pdu);
 
-   if(parameterList.size() < 3)
+   if(parameterList.size() < 4)
    {
       return false;
    }
@@ -25,9 +25,9 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
 
    switch(parameterList.size() - 1)
    {
-      case SubmittalTime:
+      case SubmissionTime:
       {
-         m_parameterList.at(SubmittalTime) = parameterList.at(SubmittalTime);
+         m_parameterList.at(SubmissionTime) = parameterList.at(SubmissionTime);
       }
       // no break
       
@@ -94,16 +94,16 @@ int ExecuteProgramPostponedProtocol::getDestinationNode() const
    }
 }
 
-void ExecuteProgramPostponedProtocol::setSubmittalTime(const long int submittalTime)
+void ExecuteProgramPostponedProtocol::setSubmissionTime(const long int submissionTime)
 {
-   m_parameterList.at(SubmittalTime) = std::to_string(submittalTime);
+   m_parameterList.at(SubmissionTime) = std::to_string(submissionTime);
 }
 
-long int ExecuteProgramPostponedProtocol::getSubmittalTime() const
+long int ExecuteProgramPostponedProtocol::getSubmissionTime() const
 {
    try
    {
-      return std::stol(m_parameterList.at(SubmittalTime));
+      return std::stol(m_parameterList.at(SubmissionTime));
    }
    catch(...)
    {
@@ -136,7 +136,7 @@ std::string ExecuteProgramPostponedProtocol::fancy() const
    message.append("ExecuteProgramPostponed\n");
    message.append("\tDelay: " + m_parameterList.at(Delay) + "\n");
    message.append("\tProgramName: " + m_parameterList.at(ProgramName) + "\n");
-   message.append("\tSubmittalTime: " + m_parameterList.at(SubmittalTime) + "\n");
+   message.append("\tSubmissionTime: " + m_parameterList.at(SubmissionTime) + "\n");
    message.append("\tSequentialNumber: " + m_parameterList.at(SequentialNumber) + "\n");
    message.append("\tDestinationNode: " + m_parameterList.at(DestinationNode));
 

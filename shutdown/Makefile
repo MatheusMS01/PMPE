@@ -1,4 +1,5 @@
 CXX=g++
+BINDIR = ../bin
 INC_DIR = ../ipc
 CXXFLAGS=-g -std=c++11 -Wall -I$(INC_DIR) 
 OBJDIR=obj
@@ -13,7 +14,7 @@ clean:
 
 $(OBJDIR)/shutdown:	$(OBJS)
 	@mkdir -p obj
-	$(CXX) $(CXXFLAGS) $(OBJS) -o shutdown
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(BINDIR)/shutdown
 
 $(OBJDIR)/%.o:	%.cpp obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@

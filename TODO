@@ -2,7 +2,7 @@ UTILIZAR find_if()!
 
 
 Questionamentos:
-1) O SubmittalTime é quando o executa_postergado dispara, ou quando o escalonador recebe?
+1) O SubmissionTime é quando o executa_postergado dispara, ou quando o escalonador recebe?
 2) O escalonador deve realizar sleep? Ou contornar de algum jeito a espera?
 3) Processos devem ser executados se forem disparados antes do shutdown?
 4) O PID que deve ser impresso é do processo filho ou do gerente?

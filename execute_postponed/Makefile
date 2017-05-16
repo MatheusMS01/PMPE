@@ -1,4 +1,5 @@
 CXX=g++
+BINDIR = ../bin
 INC_DIR = ../ipc
 CXXFLAGS=-g -std=c++11 -Wall -I$(INC_DIR) 
 OBJDIR=obj
@@ -13,7 +14,7 @@ clean:
 
 $(OBJDIR)/executa_postergado:	$(OBJS)
 	@mkdir -p obj
-	$(CXX) $(CXXFLAGS) $(OBJS) -o executa_postergado
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(BINDIR)/executa_postergado
 
 $(OBJDIR)/%.o:	%.cpp obj
 	$(CXX) $(CXXFLAGS) -c $< -o $@

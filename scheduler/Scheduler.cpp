@@ -212,7 +212,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
    const auto currentTime = std::time(nullptr);
 
    // Time when alarm is supposed to stop
-   const auto endTime = static_cast<unsigned int>(epp.getSubmittalTime() + epp.getDelay());
+   const auto endTime = static_cast<unsigned int>(epp.getSubmissionTime() + epp.getDelay());
 
    if(endTime <= currentTime)
    {
@@ -387,7 +387,7 @@ void Scheduler::printStatistics()
 {
    std::string statistics;
    statistics.append("\n-----------------------------Statistics-------------------------\n");
-   statistics.append("PID\tProgram Name\tSubmittal Time\tBegin Time\tEnd Time\n");
+   statistics.append("PID\tProgram Name\tSubmission Time\tBegin Time\tEnd Time\n");
    statistics.append("----------------------------------------------------------------\n");
    for(const auto& executionLog : m_executionLogList)
    {
@@ -397,11 +397,11 @@ void Scheduler::printStatistics()
       statistics.append(executionLog.getProgramName());
       statistics.append("\t");
 
-      const auto submittalTime = executionLog.getSubmittalTime();
-      const auto *submittalTimeInfo = localtime(&submittalTime);
-      statistics.append((submittalTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_hour) + ":");
-      statistics.append((submittalTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_min) + ":");
-      statistics.append((submittalTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(submittalTimeInfo->tm_sec) + "\t");
+      const auto submissionTime = executionLog.getSubmissionTime();
+      const auto *submissionTimeInfo = localtime(&submissionTime);
+      statistics.append((submissionTimeInfo->tm_hour < 10 ? "0" : "") + std::to_string(submissionTimeInfo->tm_hour) + ":");
+      statistics.append((submissionTimeInfo->tm_min < 10 ? "0" : "") + std::to_string(submissionTimeInfo->tm_min) + ":");
+      statistics.append((submissionTimeInfo->tm_sec < 10 ? "0" : "") + std::to_string(submissionTimeInfo->tm_sec) + "\t");
 
       const auto beginTime = executionLog.getBeginTime();
       const auto *beginTimeInfo = localtime(&beginTime);

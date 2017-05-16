@@ -9,7 +9,7 @@ public:
    enum ParameterId : unsigned int
    {
       NodeId           = 0,
-      SubmittalTime    = 1,
+      SubmissionTime    = 1,
       BeginTime        = 2,
       EndTime          = 3,
       Delay            = 4,
@@ -23,8 +23,8 @@ public:
    int getNodeId() const;
    void setNodeId(const int nodeId);
 
-   long int getSubmittalTime() const;
-   void setSubmittalTime(const long int submittalTime);
+   long int getSubmissionTime() const;
+   void setSubmissionTime(const long int submissionTime);
 
    long int getBeginTime() const;
    void setBeginTime(const long int beginTime);

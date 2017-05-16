@@ -135,7 +135,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       m_ns.setDelay(epp.getDelay());
       m_ns.setProgramName(epp.getProgramName());
       m_ns.setBeginTime(std::time(nullptr));
-      m_ns.setSubmittalTime(epp.getSubmittalTime());
+      m_ns.setSubmissionTime(epp.getSubmissionTime());
       m_ns.setPID(getpid());
       
       pid_t pid;
@@ -150,9 +150,9 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       if(pid == 0)
       {
          // @TODO: Run Program
-         // srand (time(NULL) * m_id);
-         // sleep(rand() % 10 + 1);
-         sleep(10);
+         srand (time(NULL) * m_id);
+         sleep(rand() % 3 + 1);
+         // sleep(1);
 
          _exit(0);
       }

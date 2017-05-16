@@ -11,8 +11,8 @@ public:
       Delay            = 1,
       ProgramName      = 2,
       DestinationNode  = 3,
-      SubmittalTime    = 4,
-      ParametersNumber = SubmittalTime + 1, 
+      SubmissionTime   = 4,
+      ParametersNumber = SubmissionTime + 1, 
    };
 
    ExecuteProgramPostponedProtocol();
@@ -28,8 +28,8 @@ public:
    void setDestinationNode(const int destinationNode);
    int getDestinationNode() const;
 
-   void setSubmittalTime(const long int submittalTime);
-   long int getSubmittalTime() const;
+   void setSubmissionTime(const long int submissionTime);
+   long int getSubmissionTime() const;
 
    void setSequentialNumber(const int sequentialNumber);
    int getSequentialNumber() const;
