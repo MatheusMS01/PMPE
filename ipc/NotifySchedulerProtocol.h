@@ -15,7 +15,8 @@ public:
       Delay            = 4,
       ProgramName      = 5,
       PID              = 6,
-      ParametersNumber = PID + 1, 
+      Success          = 7,
+      ParametersNumber = Success + 1, 
    };
 
    NotifySchedulerProtocol();
@@ -40,6 +41,9 @@ public:
 
    pid_t getPID() const;
    void setPID(const pid_t pid);
+
+   bool getSuccess() const;
+   void setSuccess(const bool success);
 
    std::string fancy() const;
 };

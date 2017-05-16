@@ -117,6 +117,23 @@ pid_t NotifySchedulerProtocol::getPID() const
    }
 }
 
+bool NotifySchedulerProtocol::getSuccess() const
+{
+   if(m_parameterList.at(Success) == "1")
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+
+void NotifySchedulerProtocol::setSuccess(const bool success)
+{
+   m_parameterList.at(Success) = std::to_string(success);
+}
+
 std::string NotifySchedulerProtocol::fancy() const
 {
    std::string message;

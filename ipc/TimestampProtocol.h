@@ -8,13 +8,17 @@ public:
    enum ParameterId : unsigned int
    {
       Timestamp        = 0,
-      ParametersNumber = Timestamp + 1, 
+      Success          = 1,
+      ParametersNumber = Success + 1, 
    };
 
    TimestampProtocol();
 
    long int getTimestamp() const;
    void setTimestamp(const long int timestamp);
+
+   bool getSuccess() const;
+   void setSuccess(const bool success);
 
    std::string fancy() const;
 };

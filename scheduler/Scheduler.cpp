@@ -297,22 +297,29 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
    m_log.write(std::to_string(ns.getNodeId()) + " is now free");
    m_nodeMap[ns.getNodeId()] = Node::Free;
 
-   m_executionLogList.push_back(ns);
+   if(ns.getSuccess())
+   {
+      m_executionLogList.push_back(ns);
 
-   const auto makespan = ns.getEndTime() - ns.getBeginTime();
+      const auto makespan = ns.getEndTime() - ns.getBeginTime();
 
-   std::string message;
-   message.append("job=" + std::to_string(ns.getNodeId()) + ", ");
+      std::string message;
+      message.append("job=" + std::to_string(ns.getNodeId()) + ", ");
 
-   message.append("arquivo=" + ns.getProgramName() + ", ");
+      message.append("arquivo=" + ns.getProgramName() + ", ");
 
-   message.append("delay=" + std::to_string(ns.getDelay()) +
-                  " segundo" + (ns.getDelay() > 1 ? "s" : "") +  ", ");
+      message.append("delay=" + std::to_string(ns.getDelay()) +
+                     " segundo" + (ns.getDelay() > 1 ? "s" : "") +  ", ");
 
-   message.append("makespan=" + std::to_string(makespan) + 
-                  " segundo" + (makespan > 1 ? "s" : ""));
+      message.append("makespan=" + std::to_string(makespan) + 
+                     " segundo" + (makespan > 1 ? "s" : ""));
 
-   std::cout << message << "\n";
+      std::cout << message << "\n";
+   }
+   else
+   {
+      std::cout << "Execution of program " << ns.getProgramName() << " failed for node " << ns.getNodeId() << "\n";
+   }
 
    const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), 
       [&] (const ExecuteProgramPostponedProtocol& itr)
