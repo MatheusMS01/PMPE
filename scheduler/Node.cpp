@@ -164,7 +164,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
          const auto path = "./" + epp.getProgramName();
          const auto arg = std::to_string(m_id);
 
-         _exit(execl(path.c_str(), arg.c_str(), NULL));
+         _exit(execl(path.c_str(), path.c_str(), arg.c_str(), NULL));
       }
    }
    else
