@@ -9,7 +9,7 @@ OBJS=$(addprefix $(OBJDIR)/,$(notdir $(CPPFILES:.cpp=.o)))
 all:	 $(OBJDIR)/shutdown
 
 clean:
-	rm -f shutdown
+	rm -f $(BINDIR)/shutdown
 	rm -f obj/*
 
 $(OBJDIR)/shutdown:	$(OBJS)

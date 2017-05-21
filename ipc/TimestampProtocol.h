@@ -20,5 +20,5 @@ public:
    bool getSuccess() const;
    void setSuccess(const bool success);
 
-   std::string fancy() const;
+   std::string pretty() const;
 };

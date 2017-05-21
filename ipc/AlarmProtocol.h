@@ -12,5 +12,5 @@ public:
 
    AlarmProtocol();
 
-   std::string fancy() const;
+   std::string pretty() const;
 };

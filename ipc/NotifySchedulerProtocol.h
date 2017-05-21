@@ -9,7 +9,7 @@ public:
    enum ParameterId : unsigned int
    {
       NodeId           = 0,
-      SubmissionTime    = 1,
+      SubmissionTime   = 1,
       BeginTime        = 2,
       EndTime          = 3,
       Delay            = 4,
@@ -45,5 +45,5 @@ public:
    bool getSuccess() const;
    void setSuccess(const bool success);
 
-   std::string fancy() const;
+   std::string pretty() const;
 };

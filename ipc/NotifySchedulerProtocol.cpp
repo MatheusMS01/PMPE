@@ -134,18 +134,19 @@ void NotifySchedulerProtocol::setSuccess(const bool success)
    m_parameterList.at(Success) = std::to_string(success);
 }
 
-std::string NotifySchedulerProtocol::fancy() const
+std::string NotifySchedulerProtocol::pretty() const
 {
    std::string message;
 
    message.append("NotifyScheduler\n");
-   message.append("\tNodeId: " + m_parameterList.at(NodeId) + "\n");
-   message.append("\tSubmissionTime: " + m_parameterList.at(SubmissionTime) + "\n");
-   message.append("\tBeginTime: " + m_parameterList.at(BeginTime) + "\n");
-   message.append("\tEndTime: " + m_parameterList.at(EndTime) + "\n");
-   message.append("\tDelay: " + m_parameterList.at(Delay) + "\n");
-   message.append("\tProgramName: " + m_parameterList.at(ProgramName) + "\n");
-   message.append("\tPID: " + m_parameterList.at(PID));
+   message.append("\t\tNodeId: " + m_parameterList.at(NodeId) + "\n");
+   message.append("\t\tSubmissionTime: " + m_parameterList.at(SubmissionTime) + "\n");
+   message.append("\t\tBeginTime: " + m_parameterList.at(BeginTime) + "\n");
+   message.append("\t\tEndTime: " + m_parameterList.at(EndTime) + "\n");
+   message.append("\t\tDelay: " + m_parameterList.at(Delay) + "\n");
+   message.append("\t\tProgramName: " + m_parameterList.at(ProgramName) + "\n");
+   message.append("\t\tPID: " + m_parameterList.at(PID) + "\n");
+   message.append("\t\tSuccess: " + m_parameterList.at(Success));
 
    return message;
 }

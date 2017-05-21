@@ -5,7 +5,7 @@ ShutdownProtocol::ShutdownProtocol()
 {
 }
 
-std::string ShutdownProtocol::fancy() const
+std::string ShutdownProtocol::pretty() const
 {
    return "Shutdown";
 }

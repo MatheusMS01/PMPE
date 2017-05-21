@@ -9,7 +9,7 @@ OBJS=$(addprefix $(OBJDIR)/,$(notdir $(CPPFILES:.cpp=.o)))
 all:	 $(OBJDIR)/executa_postergado
 
 clean:
-	rm -f executa_postergado
+	rm -f $(BINDIR)/executa_postergado
 	rm -f obj/*
 
 $(OBJDIR)/executa_postergado:	$(OBJS)

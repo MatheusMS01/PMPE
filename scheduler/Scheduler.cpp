@@ -14,27 +14,26 @@
 
 namespace scheduler
 {
-   void SignalHandler(int signal)
+void SignalHandler(int signal)
+{
+   switch(signal)
    {
-      switch(signal)
+      case SIGALRM:
       {
-         case SIGALRM:
-         {
-            MessageQueue messageQueue(MessageQueue::MainQueueKey);
+         MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
-            AlarmProtocol al;
+         AlarmProtocol al;
 
-            messageQueue.write(al.serialize(), MessageQueue::SchedulerId);
-         }
-         break;
-
-         default:
-         {
-         }
-         break;
+         messageQueue.write(al.serialize(), MessageQueue::SchedulerId);
       }
+      break;
 
+      default:
+      {
+      }
+      break;
    }
+}
 }
 
 Scheduler::Scheduler()
@@ -111,7 +110,7 @@ int Scheduler::execute()
          {
             ExecuteProgramPostponedProtocol epp;
             epp.parse(message);
-            m_log.write(epp.fancy());
+            m_log.write(epp.pretty());
             treat(epp);
          }
          break;
@@ -120,7 +119,7 @@ int Scheduler::execute()
          {
             NotifySchedulerProtocol ns;
             ns.parse(message);
-            m_log.write(ns.fancy());
+            m_log.write(ns.pretty());
             treat(ns);
          }
          break;
@@ -128,7 +127,7 @@ int Scheduler::execute()
          case IProtocol::Shutdown:
          {
             ShutdownProtocol sd;
-            m_log.write(sd.fancy());
+            m_log.write(sd.pretty());
             treat(sd);
          }
          break;
@@ -136,7 +135,7 @@ int Scheduler::execute()
          case IProtocol::Alarm:
          {
             AlarmProtocol al;
-            m_log.write(al.fancy());
+            m_log.write(al.pretty());
             treat(al);
          }
          break;
@@ -250,7 +249,6 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
       else
       {
          // Alarm timed out
-
          if(m_nodeMap[epp.getDestinationNode()] == Node::Busy)
          {
             // Node is still busy. Do nothing
@@ -268,7 +266,7 @@ void Scheduler::treat(ExecuteProgramPostponedProtocol& epp)
 
       const auto remaining = alarm(alarmTime);
 
-      if(remaining < static_cast<unsigned int>(alarmTime) && remaining != 0)
+      if(remaining < alarmTime && remaining != 0)
       {
          // If previous delay will finish before new one, stick to what was remaining
          m_log.write("Resetting to faster time out " + std::to_string(remaining) + " second" + (remaining > 1 ? "s" : ""));
@@ -318,7 +316,7 @@ void Scheduler::treat(const NotifySchedulerProtocol& ns)
    }
    else
    {
-      std::cout << "Execution of program " << ns.getProgramName() << " failed for node " << ns.getNodeId() << "\n";
+      std::cout << "Node " << ns.getNodeId() << " failed to execute " << ns.getProgramName() << "\n";
    }
 
    const auto eppItr = find_if(m_pendingExecutionList.begin(), m_pendingExecutionList.end(), 
@@ -359,13 +357,7 @@ void Scheduler::treat(const AlarmProtocol& al)
 
 void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& epp)
 {
-   if(m_shutdown)
-   {
-      m_log.write("Won't execute because system is shutting down!");
-      return;
-   }
-
-   m_log.write("Sending execution: " + epp.fancy());
+   m_log.write("Sending execution: " + epp.pretty());
    // Write to node zero
    if(m_messageQueue.write(epp.serialize(), MessageQueue::NodeZeroId))
    {

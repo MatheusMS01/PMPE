@@ -12,5 +12,5 @@ public:
 
    ShutdownProtocol();
 
-   std::string fancy() const;
+   std::string pretty() const;
 };

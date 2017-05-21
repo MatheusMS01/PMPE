@@ -17,33 +17,32 @@ int g_type;
 
 namespace node
 {
-   void SignalHandler(int signal)
+void SignalHandler(int signal)
+{
+   switch(signal)
    {
-      switch(signal)
+      case SIGCHLD:
       {
-         case SIGCHLD:
-         {
-            int status;
+         int status;
 
-            while(waitpid(-1, &status, WNOHANG) != -1)
-            {
-               MessageQueue messageQueue(MessageQueue::MainQueueKey);
+         pid_t pid = waitpid(-1, &status, WNOHANG);
 
-               TimestampProtocol ts;
-               ts.setTimestamp(std::time(nullptr));
-               ts.setSuccess(status == 0);
+         MessageQueue messageQueue(MessageQueue::MainQueueKey);
 
-               messageQueue.write(ts.serialize(), g_type);
-            }
-         }
-         break;
+         TimestampProtocol ts;
+         ts.setTimestamp(std::time(nullptr));
+         ts.setSuccess((status == 0 ) & (pid != -1));
 
-         default:
-         {
-         }
-         break;
+         messageQueue.write(ts.serialize(), g_type);
       }
+      break;
+
+      default:
+      {
+      }
+      break;
    }
+}
 }
 
 
@@ -108,7 +107,7 @@ void Node::execute()
          {
             ExecuteProgramPostponedProtocol epp;
             epp.parse(message);
-            m_log.write(epp.fancy());
+            m_log.write(epp.pretty());
             treat(epp);
          }
          break;
@@ -117,7 +116,7 @@ void Node::execute()
          {
             NotifySchedulerProtocol ns;
             ns.parse(message);
-            m_log.write(ns.fancy());
+            m_log.write(ns.pretty());
             treat(ns);
          }
          break;
@@ -126,7 +125,7 @@ void Node::execute()
          {
             TimestampProtocol ts;
             ts.parse(message);
-            m_log.write(ts.fancy());
+            m_log.write(ts.pretty());
             treat(ts);
          }
          break;
@@ -144,7 +143,7 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 {
    if(epp.getDestinationNode() == m_id)
    {
-      m_log.write("Received execution: " + epp.fancy());
+      m_log.write("Received execution: " + epp.pretty());
 
       m_ns.setNodeId(m_id);
       m_ns.setDelay(epp.getDelay());
@@ -152,10 +151,8 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
       m_ns.setBeginTime(std::time(nullptr));
       m_ns.setSubmissionTime(epp.getSubmissionTime());
       m_ns.setPID(getpid());
-      
-      pid_t pid;
 
-      pid = fork();
+      pid_t pid = fork();
 
       if(pid == -1)
       {
@@ -169,8 +166,6 @@ void Node::treat(const ExecuteProgramPostponedProtocol& epp)
 
          _exit(execl(path.c_str(), arg.c_str(), NULL));
       }
-
-      m_waitingTimestamp = true;
    }
    else
    {
@@ -182,7 +177,7 @@ void Node::treat(const NotifySchedulerProtocol& ns)
 {
    if(m_id == 0)
    {
-      m_log.write("Sending notification to scheduler: " + ns.fancy());
+      m_log.write("Sending notification to scheduler: " + ns.pretty());
       m_messageQueue.write(ns.serialize(), MessageQueue::SchedulerId);
    }
    else
@@ -195,13 +190,11 @@ void Node::treat(const TimestampProtocol& ts)
 {
    m_log.write("Child has terminated execution");
 
-   if(m_waitingTimestamp)
-   {
-      m_waitingTimestamp = false;
-      m_ns.setEndTime(ts.getTimestamp());
-      m_ns.setSuccess(ts.getSuccess());
-      route(m_ns.serialize(), 0);
-   }
+   m_waitingTimestamp = false;
+   m_ns.setEndTime(ts.getTimestamp());
+   m_ns.setSuccess(ts.getSuccess());
+
+   route(m_ns.serialize(), 0);
 }
 
 void Node::route(const std::string& pdu, const int destinationNode)
@@ -227,7 +220,7 @@ void Node::route(const std::string& pdu, const int destinationNode)
 
    for(const auto& neighbor : m_neighborList)
    {
-      auto distance = Utils::distanceBetweenNodes(neighbor.id, destinationNode);
+      const auto distance = Utils::distanceBetweenNodes(neighbor.id, destinationNode);
       if(distance < bestNeighbor.second)
       {
          bestNeighbor.first = neighbor;

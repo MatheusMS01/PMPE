@@ -9,7 +9,7 @@ OBJS=$(addprefix $(OBJDIR)/,$(notdir $(CPPFILES:.cpp=.o)))
 all:	 $(OBJDIR)/escalonador
 
 clean:
-	rm -f escalonador
+	rm -f $(BINDIR)/escalonador
 	rm -f obj/*
 
 $(OBJDIR)/escalonador:	$(OBJS)

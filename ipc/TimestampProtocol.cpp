@@ -39,12 +39,13 @@ void TimestampProtocol::setSuccess(const bool success)
    m_parameterList.at(Success) = std::to_string(success);
 }
 
-std::string TimestampProtocol::fancy() const
+std::string TimestampProtocol::pretty() const
 {
    std::string message;
 
    message.append("Timestamp\n");
-   message.append("\tTimestamp: " + m_parameterList.at(Timestamp));
+   message.append("\t\tTimestamp: " + m_parameterList.at(Timestamp) + "\n");
+   message.append("\t\tSuccess: " + m_parameterList.at(Success));
 
    return message;
 }

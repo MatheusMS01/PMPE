@@ -19,7 +19,7 @@ public:
 
    virtual std::string serialize() const;
    virtual bool parse(const std::string& pdu);
-   virtual std::string fancy() const = 0;
+   virtual std::string pretty() const = 0;
 
 protected:
    int m_id;

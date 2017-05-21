@@ -5,7 +5,7 @@ AlarmProtocol::AlarmProtocol()
 {
 }
 
-std::string AlarmProtocol::fancy() const
+std::string AlarmProtocol::pretty() const
 {
    return "Alarm";
 }

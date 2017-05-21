@@ -34,5 +34,5 @@ public:
    void setSequentialNumber(const int sequentialNumber);
    int getSequentialNumber() const;
 
-   std::string fancy() const;
+   std::string pretty() const;
 };
