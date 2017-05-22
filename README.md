@@ -47,14 +47,14 @@ Protocolo responsável por notificar o escalonador o término da execução do m
 Não possui parâmetros
 
 ## TimestampProtocol (Id = 3)
-Protocolo responsável por notificar o nó que seu filho terminou a execução do programa.
+Protocolo responsável por notificar o nó que seu filho terminou a execução do programa. É enviado quando o processo captura um sinal SIGCHLD.
 
 ### Parâmetros
 * Timestamp: Inteiro longo que define qual horário a execução foi terminada pelo filho
 * Success: Booleano que define se a execução ocorreu com sucesso pelo filho
 
 ## AlarmProtocol (Id = 4)
-Protocolo responsável por notificar o escalonador que o temporizador da chamada de sistema alarm() estourou
+Protocolo responsável por notificar o escalonador que o temporizador da chamada de sistema `alarm()` estourou. É enviado quando o processo captura um sinal SIGALRM.
 
 ### Parâmetros
 Não possui parâmetros
