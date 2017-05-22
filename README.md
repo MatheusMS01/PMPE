@@ -7,7 +7,7 @@ Postponed Multi-Process Execution
   * Para limpar o projeto, execute o comando `make clean`
   
 # Executando o projeto
-* Direcione o seu terminal para o diretório bin
+* Direcione o seu terminal para o diretório PMPE/bin
   * Inicie o escalonador com o comando `./escalonador &`. Ele será executado em **background**
   * Envie uma mensagem de execução de um programa com o comando `./executa_postergado delay program_name`, sendo `delay` um inteiro sem sinal e `program_name` uma string identificando o nome do binário que deverá ser executado. 
   
