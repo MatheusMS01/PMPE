@@ -17,7 +17,7 @@ Postponed Multi-Process Execution
   
 # Protocolos:
 
-## ExecuteProgramPostponedProtocol
+## ExecuteProgramPostponedProtocol (Id = 0)
 Protocolo responsável por notificar o escalonador a execução de um programa
 
 ### Parâmetros
@@ -27,8 +27,8 @@ Protocolo responsável por notificar o escalonador a execução de um programa
 * DestinationNode: Inteiro que define qual nó deve executar o programa
 * SubmissionTime: Inteiro longo que define qual horário a execução foi enviada para o escalonador
 
-## NotifySchedulerProtocol
-Protocolo responsável por notificar o escalonador o término da execução do programa por algum nó
+## NotifySchedulerProtocol (Id = 1)
+Protocolo responsável por notificar o escalonador sobre o término da execução do programa por algum nó
 
 ### Parâmetros
 * NodeId: Inteiro que define qual nó enviou a notificação
@@ -40,21 +40,21 @@ Protocolo responsável por notificar o escalonador o término da execução do p
 * PID: Inteiro que define o ID do processo
 * Success: Booleano que define se a execução ocorreu com sucesso pelo nó
 
-## AlarmProtocol
-Protocolo responsável por notificar o escalonador que o temporizador da chamada de sistema alarm() estourou
-
-### Parâmetros
-Não possui parâmetros
-
-## Shutdown
+## Shutdown (Id = 2)
 Protocolo responsável por notificar o escalonador o término da execução do mesmo
 
 ### Parâmetros
 Não possui parâmetros
 
-## TimestampProtocol
+## TimestampProtocol (Id = 3)
 Protocolo responsável por notificar o nó que seu filho terminou a execução do programa.
 
 ### Parâmetros
 * Timestamp: Inteiro longo que define qual horário a execução foi terminada pelo filho
 * Success: Booleano que define se a execução ocorreu com sucesso pelo filho
+
+## AlarmProtocol (Id = 4)
+Protocolo responsável por notificar o escalonador que o temporizador da chamada de sistema alarm() estourou
+
+### Parâmetros
+Não possui parâmetros
