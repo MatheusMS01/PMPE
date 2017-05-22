@@ -17,10 +17,11 @@ int g_type;
 
 namespace node
 {
-void SignalHandler(int signal)
-{
-   switch(signal)
+   void SignalHandler(int signal)
    {
+      switch(signal)
+      {
+
       case SIGCHLD:
       {
          int status;
@@ -41,8 +42,9 @@ void SignalHandler(int signal)
       {
       }
       break;
+
+      }
    }
-}
 }
 
 
@@ -50,7 +52,6 @@ Node::Node(const int id)
    : m_id(id)
    , m_processType(id + MessageQueue::SchedulerId + 1)
    , m_messageQueue(MessageQueue::MainQueueKey)
-   , m_waitingTimestamp(false)
    , m_ns()
    , m_log(std::to_string(id))
 {
@@ -103,38 +104,40 @@ void Node::execute()
 
       switch(Utils::getProtocolId(message))
       {
-         case IProtocol::ExecuteProgramPostponed:
-         {
-            ExecuteProgramPostponedProtocol epp;
-            epp.parse(message);
-            m_log.write(epp.pretty());
-            treat(epp);
-         }
-         break;
 
-         case IProtocol::NotifyScheduler:
-         {
-            NotifySchedulerProtocol ns;
-            ns.parse(message);
-            m_log.write(ns.pretty());
-            treat(ns);
-         }
-         break;
+      case IProtocol::ExecuteProgramPostponed:
+      {
+         ExecuteProgramPostponedProtocol epp;
+         epp.parse(message);
+         m_log.write(epp.pretty());
+         treat(epp);
+      }
+      break;
 
-         case IProtocol::Timestamp:
-         {
-            TimestampProtocol ts;
-            ts.parse(message);
-            m_log.write(ts.pretty());
-            treat(ts);
-         }
-         break;
+      case IProtocol::NotifyScheduler:
+      {
+         NotifySchedulerProtocol ns;
+         ns.parse(message);
+         m_log.write(ns.pretty());
+         treat(ns);
+      }
+      break;
 
-         default:
-         {
-            m_log.write("Message unknown: " + message);
-         }
-         break;
+      case IProtocol::Timestamp:
+      {
+         TimestampProtocol ts;
+         ts.parse(message);
+         m_log.write(ts.pretty());
+         treat(ts);
+      }
+      break;
+
+      default:
+      {
+         m_log.write("Message unknown: " + message);
+      }
+      break;
+
       }
    }
 }
@@ -190,7 +193,6 @@ void Node::treat(const TimestampProtocol& ts)
 {
    m_log.write("Child has terminated execution");
 
-   m_waitingTimestamp = false;
    m_ns.setEndTime(ts.getTimestamp());
    m_ns.setSuccess(ts.getSuccess());
 

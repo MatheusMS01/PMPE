@@ -106,45 +106,47 @@ int Scheduler::execute()
       
       switch(Utils::getProtocolId(message))
       {
-         case IProtocol::ExecuteProgramPostponed:
-         {
-            ExecuteProgramPostponedProtocol epp;
-            epp.parse(message);
-            m_log.write(epp.pretty());
-            treat(epp);
-         }
-         break;
 
-         case IProtocol::NotifyScheduler:
-         {
-            NotifySchedulerProtocol ns;
-            ns.parse(message);
-            m_log.write(ns.pretty());
-            treat(ns);
-         }
-         break;
+      case IProtocol::ExecuteProgramPostponed:
+      {
+         ExecuteProgramPostponedProtocol epp;
+         epp.parse(message);
+         m_log.write(epp.pretty());
+         treat(epp);
+      }
+      break;
 
-         case IProtocol::Shutdown:
-         {
-            ShutdownProtocol sd;
-            m_log.write(sd.pretty());
-            treat(sd);
-         }
-         break;
+      case IProtocol::NotifyScheduler:
+      {
+         NotifySchedulerProtocol ns;
+         ns.parse(message);
+         m_log.write(ns.pretty());
+         treat(ns);
+      }
+      break;
 
-         case IProtocol::Alarm:
-         {
-            AlarmProtocol al;
-            m_log.write(al.pretty());
-            treat(al);
-         }
-         break;
+      case IProtocol::Shutdown:
+      {
+         ShutdownProtocol sd;
+         m_log.write(sd.pretty());
+         treat(sd);
+      }
+      break;
 
-         default:
-         {
-            m_log.write("Message unknown: " + message);
-         }
-         break;
+      case IProtocol::Alarm:
+      {
+         AlarmProtocol al;
+         m_log.write(al.pretty());
+         treat(al);
+      }
+      break;
+
+      default:
+      {
+         m_log.write("Message unknown: " + message);
+      }
+      break;
+
       }
 
       if(m_shutdown)

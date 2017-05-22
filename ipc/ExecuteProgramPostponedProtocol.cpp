@@ -25,26 +25,28 @@ bool ExecuteProgramPostponedProtocol::parse(const std::string& pdu)
 
    switch(parameterList.size() - 1)
    {
-      case SubmissionTime:
-      {
-         m_parameterList.at(SubmissionTime) = parameterList.at(SubmissionTime);
-      }
-      // no break
-      
-      case DestinationNode:
-      {
-         m_parameterList.at(DestinationNode) = parameterList.at(DestinationNode);
-      }
-      // no break
 
-      // Mandatory
-      default:
-      {
-         m_parameterList.at(SequentialNumber) = parameterList.at(SequentialNumber);
-         m_parameterList.at(Delay) = parameterList.at(Delay);
-         m_parameterList.at(ProgramName) = parameterList.at(ProgramName);
-      }
-      break;
+   case SubmissionTime:
+   {
+      m_parameterList.at(SubmissionTime) = parameterList.at(SubmissionTime);
+   }
+   // no break
+   
+   case DestinationNode:
+   {
+      m_parameterList.at(DestinationNode) = parameterList.at(DestinationNode);
+   }
+   // no break
+
+   // Mandatory
+   default:
+   {
+      m_parameterList.at(SequentialNumber) = parameterList.at(SequentialNumber);
+      m_parameterList.at(Delay) = parameterList.at(Delay);
+      m_parameterList.at(ProgramName) = parameterList.at(ProgramName);
+   }
+   break;
+
    }
 
    return true;

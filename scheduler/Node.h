@@ -41,7 +41,6 @@ private:
    unsigned int m_x;
    unsigned int m_y;
    std::vector<Neighbor> m_neighborList;
-   bool m_waitingTimestamp;
    NotifySchedulerProtocol m_ns;
    Log m_log;
 
