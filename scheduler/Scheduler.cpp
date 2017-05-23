@@ -14,10 +14,11 @@
 
 namespace scheduler
 {
-void SignalHandler(int signal)
-{
-   switch(signal)
+   void SignalHandler(int signal)
    {
+      switch(signal)
+      {
+
       case SIGALRM:
       {
          MessageQueue messageQueue(MessageQueue::MainQueueKey);
@@ -32,8 +33,9 @@ void SignalHandler(int signal)
       {
       }
       break;
+
+      }
    }
-}
 }
 
 Scheduler::Scheduler()
