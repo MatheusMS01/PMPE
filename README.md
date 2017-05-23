@@ -23,13 +23,15 @@ Os protocolos deste projeto são tipos de mensagens necessária para diferencia�
 
 ### Exemplo:
 
-;1;2;3;
+;1;2;3;Abcd;
 
 1 = Id do protocolo
 
 2 = Primeiro parâmetro
 
 3 = Segundo parâmetro
+
+Abcd = Terceiro parâmetro
 
 ## ExecuteProgramPostponedProtocol (Id = 0)
 Protocolo responsável por notificar o escalonador a execução de um programa
