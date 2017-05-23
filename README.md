@@ -11,7 +11,7 @@ Postponed Multi-Process Execution
   * Inicie o escalonador com o comando `./escalonador &`. Ele será executado em **background**
   * Envie uma mensagem de execução de um programa com o comando `./executa_postergado delay program_name`, sendo `delay` um inteiro sem sinal e `program_name` uma string identificando o nome do binário que deverá ser executado. 
   
-  **IMPORTANTE:** O binário deve estar no diretório bin
+  **IMPORTANTE:** O binário deve estar no diretório bin. O programa de teste é o `hello_node` e seu código encontra-se no diretório PMPE/hello_node
   
   * Envie uma mensagem de desligamento do escalonador com o comando `./shutdown`
   
