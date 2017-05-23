@@ -15,6 +15,16 @@ Postponed Multi-Process Execution
   
   * Envie uma mensagem de desligamento do escalonador com o comando `./shutdown`
   
+### **ATENÇÃO**
+  
+Se o executa_postergado estiver imprimindo a mensagem de erro "*Failed to write*", a fila de mensagem está com algum erro. Para resolver execute os seguintes comandos:
+ 
+`pkill escalonador`
+
+`ipcrm -Q 0x727dda9`
+
+E inicie novamente o escalonador
+  
 # Protocolos
 Os protocolos deste projeto são tipos de mensagens necessária para diferenciação quando escritas/lidas na fila de mensagem. Todos protocolos tem um Id, e possuem a seguinte característica:
 * São delimitados por um caracter ';'
