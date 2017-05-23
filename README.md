@@ -15,7 +15,7 @@ Postponed Multi-Process Execution
   
   * Envie uma mensagem de desligamento do escalonador com o comando `./shutdown`
   
-# Protocolos:
+# Protocolos
 Os protocolos deste projeto são tipos de mensagens necessária para diferenciação quando escritas/lidas na fila de mensagem. Todos protocolos tem um Id, e possuem a seguinte característica:
 * São delimitados por um caracter ';'
 * O primeiro valor refere-se ao Id do protocolo
@@ -74,3 +74,30 @@ Protocolo responsável por notificar o escalonador que o temporizador da chamada
 
 ### Parâmetros
 Não possui parâmetros
+
+# Escalonador
+Em linhas gerais, o que o escalonador é responsável por fazer?
+
+## Tratamento de mensagens
+### ExecuteProgramPostponed
+O que o escalonador faz quando recebe um ExecuteProgramPostponed?
+
+### NotifyScheduler
+O que o escalonador faz quando recebe um NotifyScheduler?
+
+### Shutdown
+Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, e imprime as estatísticas de execução.
+
+### Alarm
+O que o escalonador faz quando recebe um Alarm?
+
+# Nó (Gerente)
+Em linhas gerais, o que o nó é responsável por fazer? Falar da construção da vizinhança
+
+## Tratamento de mensagens
+### ExecuteProgramPostponed
+O que o nó faz quando recebe um ExecuteProgramPostponed?
+### NotifyScheduler
+O que o nó faz quando recebe um NotifyScheduler?
+### Timestamp
+O que o nó faz quando recebe um Timestamp?
