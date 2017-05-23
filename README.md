@@ -16,6 +16,20 @@ Postponed Multi-Process Execution
   * Envie uma mensagem de desligamento do escalonador com o comando `./shutdown`
   
 # Protocolos:
+Os protocolos deste projeto são tipos de mensagens necessária para diferenciação quando escritas/lidas na fila de mensagem. Todos protocolos tem um Id, e possuem a seguinte característica:
+* São delimitados por um caracter ';'
+* O primeiro valor refere-se ao Id do protocolo
+* Os demais valores referem-se aos parâmetros do protocolo
+
+### Exemplo:
+
+;1;2;3;
+
+1 = Id do protocolo
+
+2 = Primeiro parâmetro
+
+3 = Segundo parâmetro
 
 ## ExecuteProgramPostponedProtocol (Id = 0)
 Protocolo responsável por notificar o escalonador a execução de um programa
