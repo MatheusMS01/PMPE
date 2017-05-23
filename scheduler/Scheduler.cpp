@@ -176,6 +176,11 @@ int Scheduler::execute()
             }
 
             // @TODO: Show programs that were not executed
+            if(!m_pendingExecutionList.empty())
+            {
+               std::cout << "\nFollowing programs will not be executed:\n";
+               printPendingExecution();
+            }
 
             printStatistics();
 
@@ -382,6 +387,21 @@ void Scheduler::executeProgramPostponed(const ExecuteProgramPostponedProtocol& e
    {
       m_log.write("Failed to send execute!");
    }
+}
+
+void Scheduler::printPendingExecution()
+{
+   std::string message;
+   for(const auto& pendingExecution : m_pendingExecutionList)
+   {
+      message.append(pendingExecution.getProgramName());
+      message.append(" for node ");
+      message.append(std::to_string(pendingExecution.getDestinationNode()) + "\n");
+   }
+
+   std::cout << message;
+
+   m_log.write(message);
 }
 
 void Scheduler::printStatistics()

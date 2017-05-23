@@ -38,5 +38,6 @@ private:
    void treat(const AlarmProtocol& al);
 
    void executeProgramPostponed(const ExecuteProgramPostponedProtocol& eep);
+   void printPendingExecution();
    void printStatistics();
 };
