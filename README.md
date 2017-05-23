@@ -86,7 +86,7 @@ Protocolo responsável por notificar o escalonador que o temporizador da chamada
 Não possui parâmetros
 
 # Escalonador
-O escalonador cria os 16 processos gerentes de execução usando a chamada de sistema `fork()`, configura os nós inicialmente como livres e espera receber uma mensagem pelo mecanismo IPC de fila de mensagem.  A partir do momento em que há mensagens na fila, existem quatro formas de tratamento das mensagens que consistem em executar o programa de forma postergada, receber a notificação do término da execução, receber um alarme informando que o delay de execução em relação a hora atual já passou e finalizar a execução de todos os processos.
+O escalonador cria os 16 processos gerentes de execução usando a chamada de sistema `fork()`, configura os nós inicialmente como livres e espera receber uma mensagem pelo mecanismo IPC de fila de mensagem para seu tipo.  A partir do momento em que há mensagens na fila, existem quatro formas de tratamento das mensagens que consistem em executar o programa de forma postergada, receber a notificação do término da execução, receber um alarme informando que o delay de execução em relação a hora atual já passou e finalizar a execução de todos os processos.
 
 ## Tratamento de mensagens
 ### ExecuteProgramPostponed
@@ -102,7 +102,7 @@ Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o 
 
 
 # Nó (Gerente)
-Em linhas gerais, o que o nó é responsável por fazer? Falar da construção da vizinhança
+Espera receber uma mensagem pelo mecanismo IPC de fila de mensagem, para seu tipo. Ao receber uma mensagem, trata-a como visto abaixo.
 
 ## Tratamento de mensagens
 ### ExecuteProgramPostponed
