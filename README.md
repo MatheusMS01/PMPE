@@ -86,7 +86,7 @@ Protocolo responsável por notificar o escalonador que o temporizador da chamada
 Não possui parâmetros
 
 # Escalonador
-Em linhas gerais, o que o escalonador é responsável por fazer?
+O escalonador cria os 16 processos gerentes de execução usando a chamada de sistema `fork()`, configura os nós inicialmente como livres e espera receber uma mensagem pelo mecanismo IPC de fila de mensagem.  A partir do momento em que há mensagens na fila, existem 4 formas de tratamento das mensagens que consistem em executar o programa de forma postergada, receber a notificação do término da execução, receber um alarme informando que o delay de execução em relação a hora atual já passou e finalizar a execução de todos os processos.
 
 ## Tratamento de mensagens
 ### ExecuteProgramPostponed
@@ -99,7 +99,7 @@ O que o escalonador faz quando recebe um NotifyScheduler?
 Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, e imprime as estatísticas de execução.
 
 ### Alarm
-O que o escalonador faz quando recebe um Alarm?
+Verifica se o tempo para executar o programa já foi alcançado. Se não, um `alarm()` será inicializado com o ExecuteProgramPostponed que deve ser executado em menos tempo e então será inseridos na lista de execuçôes pendentes, uma mensagem destinada a cada gerente caso ela já não exista. Caso o tempo tenha sido alcançado, uma mensagem com os argumentos do protocolo ExecutePostponedProtocol e cada **gerente livre** como destino é escrita na fila de mensagens para o nó zero, modifica-se o estado do gerente para ocupado no mapa de nós e o protocolo é retirado da lista de pendências caso lá ele esteja. Se o gerente não estiver livre então será adicionada a mensagem à lista de pendências, caso lá ela já não esteja.
 
 # Nó (Gerente)
 Em linhas gerais, o que o nó é responsável por fazer? Falar da construção da vizinhança
