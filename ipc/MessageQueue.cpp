@@ -9,7 +9,7 @@ MessageQueue::MessageQueue(const key_t key)
 
 /**
    Writes string in MessageQueue, for a specific type.
-   If Queue is full, caller is blocked untill enough 
+   If Queue is full, caller is blocked until enough 
    space is freed
 
    @param message to be written,
