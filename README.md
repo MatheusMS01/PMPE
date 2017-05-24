@@ -126,7 +126,7 @@ Portanto o parâmetro argv[0] é o nome do arquivo, e argv[1] é o ID do nó.
 Caso a mensagem não tenha como destino o próprio nó, o mesmo encaminha ao nó de destino via topologia torus.
 
 ### NotifyScheduler
-O que o nó faz quando recebe um NotifyScheduler?
+Ao receber essa mensagem, vrifica-se o identificador do nó. Se o nó que leu a mensagem não for o nó zero, é feito o roteamento de um NotifyScheduler para o nó zero, para que ele notifique o escalonador sobre o término da execução de um programa. E se for o nó zero, o mesmo envia a mensagem ao escalonador.
 
 ### Timestamp
 Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o nó configura o tempo de término da execução(EndTime) e a *flag* de sucesso(Success), indicando se a execução teve sucesso ou não. Em seguida, é feito o roteamento(seguindo a topologia *torus*) de um NotifyScheduler para o nó zero, responsável por transmitir a mensagem ao escalonador.
