@@ -93,7 +93,10 @@ O escalonador cria os 16 processos gerentes de execução usando a chamada de si
 Verifica se o tempo para executar o programa já foi alcançado. Se não, um `alarm()` será inicializado com o ExecuteProgramPostponed que deve ser executado em menos tempo e então será inseridos na lista de execuçôes pendentes, uma mensagem destinada a cada gerente caso ela já não exista. Caso o tempo tenha sido alcançado, uma mensagem com os argumentos do protocolo ExecutePostponedProtocol e cada **gerente livre** como destino é escrita na fila de mensagens para o nó zero, modifica-se o estado do gerente para ocupado no mapa de nós e o protocolo é retirado da lista de pendências caso lá ele esteja. Se o gerente não estiver livre então será adicionada a mensagem à lista de pendências, caso lá ela já não esteja.
 
 ### NotifyScheduler
-O que o escalonador faz quando recebe um NotifyScheduler?
+Ao receber essa mensagem, o escalonador configura o nó que enviou a mensagem como livre.
+
+Caso o programa tenha sido executado com sucesso pelo processo(parâmetro da mensagem), calcula-se o *makespan*, que é o tempo final de execução menos o tempo inicial, adiciona-se na mensagem os parâmetros *job*, nome do arquivo, delay e makespan, e são impressos na tela. Porém, caso haja falha na execução, é impressa uma mensagem de erro.
+E, por fim, é verificado se o nó que enviou essa mensagem possui alguma pendência de execução. Caso exista, retransmite a mensagem de ExecuteProgramPostponed que estava na lista de execuções pendentes para sí.
 
 ### Shutdown
 Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, e imprime as estatísticas de execução.
