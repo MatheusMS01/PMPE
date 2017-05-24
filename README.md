@@ -3,9 +3,13 @@ Postponed Multi-Process Execution
 
 ## Integrantes
 Gabriela da Silva Lopes 12/0060396
+
 Jorge Gabriel Luz Mendes 12/0014599
+
 Lucilia Pereira de Oliveira 12/0045397
+
 Marcos Cordeiro Fleury 12/0017857
+
 Matheus Medeiros Sarmento 12/0053161
 
 # Compilando o projeto
