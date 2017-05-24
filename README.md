@@ -145,5 +145,5 @@ Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o n�
 # Executa Postergado
 Este processo é responsável transmitir uma mensagem ao escalonador que um novo programa deve ser executado pelos nós gerentes. Como explicado no começo do documento, o padrão `./executa_postergado delay program_name` é utilizado para enviar ao escalonador a execução de todos os nó do programa `program_name` para ser executado após `delay` segundos. Os parâmetros recebidos por argumentos são convertidos para a string do protocolo ExecutePostponedProtocol e adicionadas à fila de mensagens para o escalonador, além do tempo em que a mensagem foi gerada.
 
-** ROTEAMENTO **
+### ROTEAMENTO 
 Quando a palavra roteamento é empregada, refere-se à troca de mensagens, via **fila de mensagem** entre os nós, seguindo a topologia *torus*.
