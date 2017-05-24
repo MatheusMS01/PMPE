@@ -86,7 +86,7 @@ Protocolo responsável por notificar o escalonador que o temporizador da chamada
 Não possui parâmetros
 
 # Fila de mensagem
-Mecanismo IPC utilizando as chamadas de sistema UNIX `msgget()` e `msgsnd()`. Definiu-se uma estrutura composta por um `long`, responsável por definir o tipo da mensagem na fila e um `*buffer* de 128 bytes`, para a troca de mensagens.
+Mecanismo IPC utilizando as chamadas de sistema UNIX `msgget()` e `msgsnd()`. Definiu-se uma estrutura composta por um `long`, responsável por definir o tipo da mensagem na fila e um `buffer de 128 bytes`, para a troca de mensagens.
 
 O código encontra-se nos arquivos `PMPE/ipc/MessageQueue.h` e `PMPE/ipc/MessageQueue.cpp`
 
