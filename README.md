@@ -137,10 +137,13 @@ Portanto o parâmetro argv[0] é o nome do arquivo, e argv[1] é o ID do nó.
 Caso a mensagem não tenha como destino o próprio nó, o mesmo encaminha ao nó de destino via topologia torus.
 
 ### NotifyScheduler
-Ao receber essa mensagem, vrifica-se o identificador do nó. Se o nó que leu a mensagem não for o nó zero, é feito o roteamento de um NotifyScheduler para o nó zero, para que ele notifique o escalonador sobre o término da execução de um programa. E se for o nó zero, o mesmo envia a mensagem ao escalonador.
+Ao receber essa mensagem, verifica-se o identificador do nó. Se o nó que leu a mensagem não for o nó zero, é repassada a mensagem para o nó zero, para que ele notifique o escalonador sobre o término da execução de um programa. E se for o nó zero, o mesmo envia a mensagem ao escalonador.
 
 ### Timestamp
-Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o nó configura o tempo de término da execução(EndTime) e a *flag* de sucesso(Success), indicando se a execução teve sucesso ou não. Em seguida, é feito o roteamento(seguindo a topologia *torus*) de um NotifyScheduler para o nó zero, responsável por transmitir a mensagem ao escalonador.
+Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o nó configura o tempo de término da execução(EndTime) e a *flag* de sucesso(Success), indicando se a execução teve sucesso ou não. Em seguida, é feito o roteamento de um NotifyScheduler para o nó zero, responsável por transmitir a mensagem ao escalonador.
 
 # Executa Postergado
 Este processo é responsável transmitir uma mensagem ao escalonador que um novo programa deve ser executado pelos nós gerentes. Como explicado no começo do documento, o padrão `./executa_postergado delay program_name` é utilizado para enviar ao escalonador a execução de todos os nó do programa `program_name` para ser executado após `delay` segundos. Os parâmetros recebidos por argumentos são convertidos para a string do protocolo ExecutePostponedProtocol e adicionadas à fila de mensagens para o escalonador, além do tempo em que a mensagem foi gerada.
+
+** ROTEAMENTO **
+Quando a palavra roteamento é empregada, refere-se à troca de mensagens, via **fila de mensagem** entre os nós, seguindo a topologia *torus*.
