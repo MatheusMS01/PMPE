@@ -85,6 +85,11 @@ Protocolo responsável por notificar o escalonador que o temporizador da chamada
 ### Parâmetros
 Não possui parâmetros
 
+# Fila de mensagem
+Mecanismo IPC utilizando as chamadas de sistema UNIX `msgget()` e `msgsnd()`. Definiu-se uma estrutura composta por um `long`, responsável por definir o tipo da mensagem na fila e um `*buffer* de 128 bytes`, para a troca de mensagens.
+
+O código encontra-se nos arquivos `PMPE/ipc/MessageQueue.h` e `PMPE/ipc/MessageQueue.cpp`
+
 # Escalonador
 O escalonador cria os 16 processos gerentes de execução usando a chamada de sistema `fork()`, configura os nós inicialmente como livres e espera receber uma mensagem pelo mecanismo IPC de fila de mensagem para seu tipo.  A partir do momento em que há mensagens na fila, existem quatro formas de tratamento das mensagens que consistem em executar o programa de forma postergada, receber a notificação do término da execução, receber um alarme informando que o delay de execução em relação a hora atual já passou e finalizar a execução de todos os processos.
 
@@ -100,19 +105,29 @@ Caso o programa tenha sido executado com sucesso pelo processo(parâmetro da men
 E, por fim, é verificado se o nó que enviou essa mensagem possui alguma pendência de execução. Caso exista, trata novamente a mensagem de ExecuteProgramPostponed que estava na lista de execuções pendentes.
 
 ### Shutdown
-Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, e imprime as estatísticas de execução.
+Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, imprime as estatísticas de execução e destrói a fila de mensagens.
 
 ### Alarm
 Ao receber essa mensagem, são tratadas todas as mensagens que se encontram na lista de execuções pendentes, respeitando o limite máximo de *bytes* que podem ser escritos na fila de mensagem.
 
 # Nó (Gerente)
-Espera receber uma mensagem pelo mecanismo IPC de fila de mensagem, para seu tipo. Ao receber uma mensagem, trata-a como visto abaixo.
+Constrói uma vizinhança de quatro nós adjacentes seguindo a topologia torus.
+
+Espera receber uma mensagem pelo mecanismo IPC de fila de mensagem, para seu tipo.
+
+Ao receber uma mensagem, trata-a como pode ser visto abaixo.
 
 ## Tratamento de mensagens
 ### ExecuteProgramPostponed
-O que o nó faz quando recebe um ExecuteProgramPostponed?
+Ao receber essa mensagem, o nó verifica se o destino dela é para ele mesmo. Caso seja, significa que o nó deve criar um processo para executar o programa, cujo nome está encapsulado na mensagem; o nó então cria um processo filho via `fork()`, que executa o programa através da chamada de sistema `execl()`, passando como parâmetros o nome do arquivo a ser executado e o ID do nó que criou o filho.
+
+Portanto o parâmetro argv[0] é o nome do arquivo, e argv[1] é o ID do nó.
+
+Caso a mensagem não tenha como destino o próprio nó, o mesmo encaminha ao nó de destino via topologia torus.
+
 ### NotifyScheduler
 O que o nó faz quando recebe um NotifyScheduler?
+
 ### Timestamp
 Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o nó configura o tempo de término da execução(EndTime) e a *flag* de sucesso(Success), indicando se a execução teve sucesso ou não. Em seguida, é feito o roteamento(seguindo a topologia *torus*) de um NotifyScheduler para o nó zero, responsável por transmitir a mensagem ao escalonador.
 
