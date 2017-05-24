@@ -114,4 +114,4 @@ O que o nó faz quando recebe um ExecuteProgramPostponed?
 ### NotifyScheduler
 O que o nó faz quando recebe um NotifyScheduler?
 ### Timestamp
-O que o nó faz quando recebe um Timestamp?
+Ao receber essa mensagem, que indica que o seu filho encerrou a execução, o nó configura o tempo de término da execução(EndTime) e a *flag* de sucesso(Success), indicando se a execução teve sucesso ou não. Em seguida, é feito o roteamento(seguindo a topologia *torus*) de um NotifyScheduler para o nó zero, responsável por transmitir a mensagem ao escalonador.
