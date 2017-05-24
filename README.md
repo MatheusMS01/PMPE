@@ -96,13 +96,14 @@ Verifica se o tempo para executar o programa já foi alcançado. Se não, um `al
 Ao receber essa mensagem, o escalonador configura o nó que enviou a mensagem como livre.
 
 Caso o programa tenha sido executado com sucesso pelo processo(parâmetro da mensagem), calcula-se o *makespan*, que é o tempo final de execução menos o tempo inicial, adiciona-se na mensagem os parâmetros *job*, nome do arquivo, delay e makespan, e são impressos na tela. Porém, caso haja falha na execução, é impressa uma mensagem de erro.
-E, por fim, é verificado se o nó que enviou essa mensagem possui alguma pendência de execução. Caso exista, retransmite a mensagem de ExecuteProgramPostponed que estava na lista de execuções pendentes para sí.
+
+E, por fim, é verificado se o nó que enviou essa mensagem possui alguma pendência de execução. Caso exista, trata novamente a mensagem de ExecuteProgramPostponed que estava na lista de execuções pendentes.
 
 ### Shutdown
 Configura uma *flag* que diz se o sistema deve ser finalizado. Toda vez após o tratamento **de qualquer mensagem**, o escalonador verifica se essa flag está marcada. Se sim, verifica se todos nós estão livres. Caso não estejam, não termina o processo e espera a disponibilidade dos nós ocupados. Caso todos os nós estejam livres, o escalonador mata os processos filhos(gerentes), imprime a lista de programas que não foram executados, caso existam, e imprime as estatísticas de execução.
 
 ### Alarm
-
+Ao receber essa mensagem, são tratadas todas as mensagens que se encontram na lista de execuções pendentes, respeitando o limite máximo de *bytes* que podem ser escritos na fila de mensagem.
 
 # Nó (Gerente)
 Espera receber uma mensagem pelo mecanismo IPC de fila de mensagem, para seu tipo. Ao receber uma mensagem, trata-a como visto abaixo.
