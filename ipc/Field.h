@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 #define FIELD( name, type ) \
    private: \
