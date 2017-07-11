@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IProtocol.h"
+#include "Field.h"
 
 class ExecuteProgramPostponedProtocol : public IProtocol
 {
@@ -14,6 +15,12 @@ public:
       SubmissionTime   = 4,
       ParametersNumber = SubmissionTime + 1, 
    };
+   
+   FIELD( SequentialNumber, uint32_t);
+   FIELD( Delay, uint32_t);
+   FIELD( ProgramName, std::string);
+   FIELD( DestinationNode, uint8_t);
+   FIELD( SubmissionTime, uint32_t);
 
    ExecuteProgramPostponedProtocol();
 
